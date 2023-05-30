@@ -1,0 +1,210 @@
+
+        <!-- partial -->
+        <%- include('../layouts/adminHeader.ejs') %>
+        
+        <div class="main-panel">
+            
+          <div class="content-wrapper">
+            
+            <div class="row">
+                <form class="d-flex align-items-center h-100" method="post" action="">
+                    <div class="input-group">
+                      <div class="input-group-prepend bg-transparent">
+                        <i class="input-group-text border-0 mdi mdi-magnify"></i>
+                      </div>
+                      <input type="text" class="form-control bg-transparent " placeholder="Search User">
+                    </div>
+                   
+                        <input type="submit" class="form-control bg-transparent border-0"   value="Search">
+                  
+                  </form>
+                <div class=" grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">FRUITKHA USERS </h4>
+                      <p class="card-description">  <code></code>
+                      </p>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <%if(userData.length>0)  { %>
+                                <%for(let i=0;i <userData.length; i++){ %>
+                          <tr>
+                            <td><%= i+1 %></td>
+                            <td><%= userData[i].email %></td>
+                            <td><%= userData[i].name %></td>
+                            <td><%= userData[i].mobile %></td>
+                            <td>
+                                <% if(userData[i].blockStatus){  %>
+                                <!-- <label class="badge badge-success"> -->
+                                    <a class="btn btn-success" data-bs-target="#unblockBut" data-bs-toggle="modal"  onclick="unblock('<%= userData[i]._id %>')" >Unblock</a>
+                                <!-- </label> -->
+                                <% }else{ %>
+                                <!-- <label class="badge badge-danger"> -->
+                                    <a class="btn btn-danger" data-bs-target="#blockBut" data-bs-toggle="modal"  onclick="block('<%= userData[i]._id %>')">Block</a>
+                                <!-- </label> -->
+                             <% } %>
+                            </td>
+                          </tr>
+                            <% } %>
+                        <% }else{ %>
+                            <tr>
+                                <td colspan="5">User not found</td>
+            
+                            </tr>
+                           <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          
+          <!-- content-wrapper ends -->
+          <!-- partial:../../partials/_footer.html -->
+          <div>
+          </div>
+          <div>
+        </div>
+        <div>
+        </div>
+        <div>
+        </div>
+        <div>
+        </div>
+          
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <footer class="footer">
+      <div class="container-fluid d-flex justify-content-between">
+        <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
+        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin template</a> from Bootstrapdash.com</span>
+      </div>
+    </footer>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="../../assets/js/off-canvas.js"></script>
+    <script src="../../assets/js/hoverable-collapse.js"></script>
+    <script src="../../assets/js/misc.js"></script>
+    
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <!-- End custom js for this page -->
+  </body>
+</html>
+<div class="modal fade" id="blockBut" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Block</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to Block this user?
+        <input type="hidden" id="blockID">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+        <button class="btn btn-danger mt-1 mb-1" onclick='return blockUser()' id="block-Button">Block</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script> 
+    function block(data){
+        console.log(data);
+        document.getElementById('blockID').value=data;
+    }
+    function blockUser() {
+      const url = '/admin/users/block'; 
+      const id=document.getElementById('blockID').value;
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ id: id }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        $('#blockBut').modal('hide')
+        console.log(response+" this is response")
+      })
+      .then(data => {
+        location.reload()
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };    
+        </script>
+
+<div class="modal fade" id="unblockBut" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">UnBlock</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to UnBlock this user?
+        <input type="hidden" id="unblockID">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+        <button class="btn btn-success mt-1 mb-1" onclick='return unblockUser()' id="unblock-Button">UnBlock</button>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    function unblock(data){
+      console.log(data);
+      document.getElementById('unblockID').value=data;
+    }
+    function unblockUser() {
+      const id = document.getElementById("unblockID").value
+      const url = '/admin/users/unblock'; 
+    
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ id: id }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+            $('#unblockBut').modal('hide')
+            console.log(response+"this is response")
+          })
+          .then(data => {
+            location.reload()
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      };
+    </script>
+   

@@ -1,0 +1,271 @@
+<%- include('../layouts/header.ejs') %>
+<body>
+	<style>
+		.btn-color{
+  background-color: #07212e;
+  color: #fff;
+  
+}
+
+.profile-image-pic{
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
+}
+
+
+
+.cardbody-color{
+  background-color: #ebf2fa;
+}
+
+a{
+  text-decoration: none;
+}
+	</style>
+	
+	<!--PreLoader-->
+    <!-- <div class="loader">
+        <div class="loader-inner">
+            <div class="circle"></div>
+        </div>
+    </div> -->
+    <!--PreLoader Ends-->
+	
+	<!-- header -->
+	<!-- <div class="top-header-area" id="sticker">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 col-sm-12 text-center">
+					 <div class="main-menu-wrap"> -->
+						<!-- logo -->
+						
+						<!-- logo -->
+
+						<!-- menu start -->
+						<!-- <nav class="main-menu">
+							<ul>
+								<li class="current-list-item"><a href="#">Home</a>
+									<ul class="sub-menu">
+										<li><a href="index.html">Static Home</a></li>
+										<li><a href="index_2.html">Slider Home</a></li>
+									</ul>
+								</li>
+								<li><a href="about.html">About</a></li>
+								<li><a href="#">Pages</a>
+									<ul class="sub-menu">
+										<li><a href="404.html">404 page</a></li>
+										<li><a href="about.html">About</a></li>
+										<li><a href="cart.html">Cart</a></li>
+										<li><a href="checkout.html">Check Out</a></li>
+										<li><a href="contact.html">Contact</a></li>
+										<li><a href="news.html">News</a></li>
+										<li><a href="shop.html">Shop</a></li>
+									</ul>
+								</li>
+								<li><a href="news.html">News</a>
+									<ul class="sub-menu">
+										<li><a href="news.html">News</a></li>
+										<li><a href="single-news.html">Single News</a></li>
+									</ul>
+								</li>
+								<li><a href="contact.html">Contact</a></li>
+								<li><a href="shop.html">Shop</a>
+									<ul class="sub-menu">
+										<li><a href="shop.html">Shop</a></li>
+										<li><a href="checkout.html">Check Out</a></li>
+										<li><a href="single-product.html">Single Product</a></li>
+										<li><a href="cart.html">Cart</a></li>
+									</ul>
+								</li>
+								<li>
+									<div class="header-icons">
+										<a class="shopping-cart" href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+										<a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
+									</div>
+								</li>
+							</ul>
+						</nav>
+						<a class="mobile-show search-bar-icon" href="#"><i class="fas fa-search"></i></a>
+						<div class="mobile-menu"></div> -->
+						<!-- menu end -->
+				
+	<!-- end header -->
+
+	<!-- search area -->
+	<!-- <div class="search-area">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<span class="close-btn"><i class="fas fa-window-close"></i></span>
+					<div class="search-bar">
+						<div class="search-bar-tablecell">
+							<h3>Search For:</h3>
+							<input type="text" placeholder="Keywords">
+							<button type="submit">Search <i class="fas fa-search"></i></button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> -->
+	<!-- end search arewa -->
+	
+	<!-- breadcrumb-section -->
+	<!-- <div class="breadcrumb-section breadcrumb"> -->
+		<div class="container">
+			<div class="row">
+				<!-- <div class="col-lg-8 offset-lg-2 text-center">
+					<div class="breadcrumb-text">
+						<p></p>
+						<h1>Login</h1>
+					</div>
+				</div>
+			</div>
+		</div> --> 
+		<div class="site-logo">
+			<a href="index.html">
+				<img src="/img/logo.png" alt="">
+			</a>
+		</div> 
+	</div>
+</div>
+</div>
+</div>
+</div>
+	<!-- end breadcrumb section -->
+	<div class="container">
+		<div class="row">
+		  <div class="col-md-6 offset-md-3">
+			 <h3 class="text-center text-dark mt-5">Login </h3>
+			<!-- <div class="text-center mb-5 text-dark">Made with bootstrap</div> -->
+			<div class="card my-5"> 
+				
+	
+			  <form  method="post" onsubmit="return validate()" class="card-body cardbody-color p-lg-5">
+				
+				<div class="text-center">
+				  <img src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png" class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+					width="200px" alt="profile">
+				</div>
+				<%  
+				if(typeof message !=='undefined'){
+					%>
+						<p style="color:red;"><%= message %></p>
+				
+					<%
+				
+				}
+				
+				%>
+				<div class="mb-3">
+					<p id="emailError" style="color: red;"></p>
+				  <input type="text" id="email" class="form-control"  aria-describedby="emailHelp" name="email"
+					placeholder="Email">
+				</div>
+				<!-- <div class="mb-3">
+				  <input type="password" class="form-control" id="password" placeholder="password">
+				</div> -->
+				<div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100">Continue</button></div>
+				<div id="emailHelp" class="form-text text-center mb-5 text-dark">Not
+				  Registered? <a href="/signup" class="text "> Create an
+					Account</a>
+				</div>
+			  </form>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+	<!-- contact form -->
+	
+	<!-- end contact form -->
+
+	<!-- find our location -->
+	<!-- <div class="find-location blue-bg">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<p> <i class="fas fa-map-marker-alt"></i> Find Our Location</p>
+				</div>
+			</div>
+		</div>
+	</div> -->
+	<!-- end find our location -->
+
+	<!-- google map section -->
+	<!-- <div class="embed-responsive embed-responsive-21by9">
+		<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26432.42324808999!2d-118.34398767954286!3d34.09378509738966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2bf07045279bf%3A0xf67a9a6797bdfae4!2sHollywood%2C%20Los%20Angeles%2C%20CA%2C%20USA!5e0!3m2!1sen!2sbd!4v1576846473265!5m2!1sen!2sbd" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" class="embed-responsive-item"></iframe>
+	</div> -->
+	<!-- end google map section -->
+
+
+	<!-- footer -->
+	
+	<!-- end footer -->
+	
+	<!-- copyright -->
+	<div class="copyright">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 col-md-12">
+					<p>Copyrights &copy; 2019 - <a href="https://imransdesign.com/">Hafiz Ahmed</a>,  All Rights Reserved.<br>
+						Distributed By - <a href="https://themewagon.com/">Themewagon</a>
+					</p>
+				</div>
+				<div class="col-lg-6 text-right col-md-12">
+					<div class="social-icons">
+						<ul>
+							<li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end copyright -->
+	
+	<!-- jquery -->
+	<script src="/js/jquery-1.11.3.min.js"></script>
+	<!-- bootstrap -->
+	<script src="/bootstrap/js/bootstrap.min.js"></script>
+	<!-- count down -->
+	<script src="/js/jquery.countdown.js"></script>
+	<!-- isotope -->
+	<script src="/js/jquery.isotope-3.0.6.min.js"></script>
+	<!-- waypoints -->
+	<script src="/js/waypoints.js"></script>
+	<!-- owl carousel -->
+	<script src="/js/owl.carousel.min.js"></script>
+	<!-- magnific popup -->
+	<script src="/js/jquery.magnific-popup.min.js"></script>
+	<!-- mean menu -->
+	<script src="/js/jquery.meanmenu.min.js"></script>
+	<!-- sticker js -->
+	<script src="/js/sticker.js"></script>
+	<!-- form validation js -->
+	<script src="/js/form-validate.js"></script>
+	<!-- main js -->
+	<script src="/js/main.js"></script>
+	<script>
+		function validate(){
+			let email=document.getElementById('email').value
+			let emailError=document.getElementById('emailError')
+			let regex=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+			if(!regex.test(email)){
+				emailError.textContent='Enter a valid Email';
+				return false
+			}else{
+				emailError.textContent='';
+				return true;
+			}
+
+		}
+	</script>
+	
+<%- include('../layouts/footer.ejs') %>

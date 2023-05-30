@@ -1,0 +1,107 @@
+<%- include('../layouts/adminHeader.ejs') %>
+<div class="main-panel">
+<div class="content-wrapper">
+    <div class="col-lg-10 grid-margin ">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add New Product</h4>
+        <p class="card-description"> Enter new Product details </p>
+        <%  
+        if(typeof message !=='undefined'){
+            %>
+                <p style="color:green;"><%= message %></p>        
+            <%
+         }
+         %>
+        <form class="forms-sample" onsubmit="return validate()" enctype="multipart/form-data"  method="post">
+          <div class="form-group">
+            <label for="exampleInputName1">Product Name</label>
+            <input type="text" name="ProductName" class="form-control" id="name" placeholder="Name">
+          </div>
+          <div class="form-group">
+            <label  for="exampleFormControlSelect1">Product Category</label>
+            <select class="form-control form-control" name="Category" id="category">
+                <% if (Categories.length>0) { %>
+                    <% for( let i = 0; i < Categories.length; i++ ) { %>
+              <option value="<%= Categories[i]._id %>"><%= Categories[i].categoryName %></option>
+              <% } %>
+              <% } %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Product Quantity</label>
+            <input type="text" name="Quantity" class="form-control" id="qauntity" placeholder="Quantity">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword4">Price of the Product </label>
+            <input type="text" name="Price" class="form-control" id="price" placeholder="Price">
+          </div>
+          <div class="form-group">
+            <label>Product Image</label>
+            <input type="file" name="img[]" class="file-upload-default">
+            <div class="input-group col-xs-12">
+                <div class="form-group">
+                    <input type="file" id="image"  name="images" accept="image/*" multiple class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image">
+                  </div>
+            </div>
+          </div>
+          <!-- <div class="form-group">
+            <label for="exampleInputCity1">Description </label>
+            <input type="text" class="form-control" id="exampleInputCity1" placeholder="Description">
+          </div> -->
+          <div class="form-group">
+            <label for="exampleTextarea1">Description</label>
+            <textarea class="form-control" name="Description" id="exampleTextarea1" rows="4"></textarea>
+          </div>
+          <p id="errorbox" class="error-message"></p>
+          <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+          <button class="btn btn-light">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div>
+</div>
+<div>
+</div>
+<div>
+</div>
+<div>
+</div>
+<div>
+</div>
+
+<!-- partial -->
+</div>
+<!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<style>
+  .error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+</style>
+<script>
+function validate() {
+  let name = document.getElementById('name').value;
+  let category = document.getElementById('category').value;
+  let quantity = document.getElementById('qauntity').value;
+  let price = document.getElementById('price').value;
+  let error = document.getElementById('errorbox');
+
+  if (!name || name.length < 4 || !category || quantity < 0 || price < 0) {
+    error.textContent = 'Please Enter valid details';
+    return false;
+  }
+
+  // Perform additional validations here
+
+  return true;
+}
+
+
+</script>
+<%- include('../layouts/adminFooter.ejs') %>

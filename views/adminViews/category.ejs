@@ -1,0 +1,108 @@
+<%- include('../layouts/adminHeader.ejs') %>
+<div class="main-panel">
+<div class="content-wrapper">
+<div class="col-lg-10 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Categories</h4>
+        <p class="card-description">  <code></code>
+        </p>
+        <a type="button" href="/admin/category/add" class="btn btn-outline-success btn-fw">Add new Category</a>
+        <p></p>
+         <%  
+				if(typeof message !=='undefined'){
+					%>
+						<p style="color:red;"><%= message %></p>
+				
+					<%
+				
+				}
+				
+				%> 
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th> # </th>
+              <th> Category Image </th>
+              <th> Category name </th> 
+              <th> Status </th>            
+            </tr>
+          </thead>
+          <tbody>
+            <% if (categoryData.length > 0) { %>
+                <% for( let i = 0; i < categoryData.length; i++ ) { %>                             
+            <tr>
+              <td> <%= i+1 %> </td>              
+              <td class="py-1">
+                <img src="/images/<%= categoryData[i].categoryImage  %>" alt="image" />
+              </td>
+              <td> <%= categoryData[i].categoryName %>  </td>              
+              <td> <a type="button" href="/admin/editCategory?id=<%= categoryData[i]._id %>" class="btn btn-gradient-primary btn-sm">Edit</a>
+                <a href="#" type="button" data-bs-target="#unblockBut" data-bs-toggle="modal" onclick="openDeleteModal('<%= categoryData[i]._id %>')" class="btn btn-gradient-danger  btn-sm">Delete</a>
+              </td>
+            </tr>
+              <% } %>
+              <% }else{ %>
+                <tr>
+                    <td colspan="5"> No Category found</td>
+
+                </tr>
+               <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+<%- include('../layouts/adminFooter.ejs') %>
+<script>
+function openDeleteModal(idOfProduct) {
+  // Set the value of the hidden input field
+  document.getElementById('deleteID').value = idOfProduct;
+  
+  // Open the modal
+  // const modal = new bootstrap.Modal(document.getElementById('unblockBut'));
+  // modal.show();
+}
+function deleteCategory() {
+    const url = '/admin/deleteCategory'; 
+    const id=document.getElementById('deleteID').value;
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ id: id }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      $('#unblockBut').modal('hide')
+      console.log(response+"this is response")
+    })
+    .then(data => {
+      location.reload()
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};    
+</script>
+
+<%- include('../layouts/adminFooter.ejs') %>
+<div class="modal fade" id="unblockBut" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="staticBackdropLabel">Delete</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to Delete this Category?
+      <input type="hidden" id="deleteID">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button class="btn btn-success mt-1 mb-1" onclick="return deleteCategory()" id="unblock-Button">Delete</button>
+
+      <!-- <button class="btn btn-success mt-1 mb-1" onclick='return unblockUser()' id="unblock-Button">UnBlock</button> -->

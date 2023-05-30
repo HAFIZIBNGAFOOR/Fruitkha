@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!-- Coding By CodingNepal - codingnepalweb.com -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>OTP Verification Form</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+   <script src="script.js" defer></script>
+  </head>
+  <body>
+    <style>
+        /* Import Google font - Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #07212e;
+}
+:where(.container, form, .input-field, header) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  background: #fff;
+  padding: 30px 65px;
+  border-radius: 12px;
+  row-gap: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+.container header {
+  height: 65px;
+  width: 65px;
+  background: #4070f4;
+  color: #fff;
+  font-size: 2.5rem;
+  border-radius: 50%;
+}
+.container h4 {
+  font-size: 1.25rem;
+  color: #333;
+  font-weight: 500;
+}
+form .input-field {
+  flex-direction: row;
+  column-gap: 10px;
+}
+.input-field input {
+  height: 45px;
+  width: 42px;
+  border-radius: 6px;
+  outline: none;
+  font-size: 1.125rem;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+.input-field input:focus {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+.input-field input::-webkit-inner-spin-button,
+.input-field input::-webkit-outer-spin-button {
+  display: none;
+}
+form button {
+  margin-top: 25px;
+  width: 100%;
+  color: #fff;
+  font-size: 1rem;
+  border: none;
+  padding: 9px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  /* pointer-events: none; */
+  background: #6e93f7;
+  transition: all 0.2s ease;
+}
+form button.active {
+  background: #4070f4;
+  pointer-events: auto;
+}
+form button:hover {
+  background: #0e4bf1;
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700');
+*{
+  border-radius: 0px !important;
+  font-family: "Poppins", sans-serif;
+}
+
+body{
+  background-color: #e1e1e1 !important;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+}
+
+.card{
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.card-header{
+  color: white !important;
+  background: #3366FF !important;
+  text-align: center;
+}
+
+.card-header > img{
+  width: 180px;
+}
+
+.input-container input{
+  width: 40px;
+  height: 40px;
+}
+
+.form-control:focus{
+  box-shadow: none !important;
+  border: 1px solid #3366FF !important;
+}
+
+.verify-btn{
+  border-radius: 20px !important;
+  border: 0px !important;
+  width: 140px;
+  background-color: #3366FF !important;
+}
+    </style>
+    <div class="container">
+      <header>
+        <i class="bx bxs-check-shield"></i>
+      </header>
+      <h4>Enter OTP Code</h4>
+      <%  
+				if(typeof message !=='undefined'){
+					%>
+						<p style="color:rgb(231, 28, 1);"><%= message %></p>
+				
+					<%
+				
+				}
+				%>
+                <form action="/otp" method="post">
+                    <h1 class="pb-3 font-weight-bold">Enter your OTP</h1>
+                    <!-- Mobile input -->
+                    <div class="form-outline mb-4">
+                      <input type="text" id="otp" name="otp" class="form-control form-control-lg border-dark"
+                        placeholder="Please enter OTP" maxlength="4"  />
+                      <div class="error" id="otpErr"></div>
+                    </div>
+                    <% if(typeof error !== 'undefined'){%>
+                        <h5 class="text-danger text-center"><%= error  %></h5>
+                    <%}%>
+                    
+                
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-danger px-4  w-100 verify-btn">Verify Otp</button>
+                  </form>
+                
+                  <span id="verifiBtn"> <button disabled="true"
+                    class="btn btn-danger px-4 w-100 border-dark mt-2">Resend OTP in <span
+                      class="timer"></span> </span>
+                <span id="counter"></span>
+                </span></button><br> 
+    </div>
+  </body>
+  <script>
+	function countdown() {
+	  let seconds = 59;
+	  function tick() {
+		let counter = document.getElementById("counter");
+		seconds--;
+		counter.innerHTML =
+		  "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+		if (seconds > 0) {
+		  setTimeout(tick, 1000);
+		} else {
+		  document.getElementById("verifiBtn").innerHTML = `
+		 
+			   <button  type ="submit" method="post" class="btn btn-success btn-lg btn-genric w-100 border-dark mt-2" onclick="location.reload()">resend Otp</button>
+			   <br>
+			  `;
+		  document.getElementById("counter").innerHTML = "";
+		}
+	  }
+	  tick();
+	}
+	countdown();
+  </script>
+</html>
