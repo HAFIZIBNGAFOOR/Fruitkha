@@ -127,7 +127,7 @@ const unBlockUser= async (req,res)=>{
 }
 const categoryLoad =async(req,res)=>{
     try {
-        const categoryData=await Category.find({}); 
+        const categoryData=await Category.find({isDeleted:false}); 
         console.log(categoryData+"this is catweory data");
         // console.log(categoryData.categoryImage);
         res.render('category',{categoryData:categoryData});
@@ -173,8 +173,8 @@ const categoryAdding=async (req,res)=>{
 const deleteCategory=async(req,res)=>{
    try {
     const Categorydata=req.body.id
-    const categoryTodelete=await Category.deleteOne({_id:Categorydata});
-    const categoryList=await Category.find({});
+    const categoryTodelete=await Category.findByIdAndUpdate({_id:Categorydata},{$set:{isDeleted:true}});
+    const categoryList=await Category.find({isDeleted:false});
     res.render('category',{message1:'category delete success',categoryData:categoryList})
    } catch (error) {
     console.log('edit Category error '+error);

@@ -13,13 +13,18 @@
 			<div class="row">
 				<div class="col-lg-9 offset-lg-2 text-center">
 					<div class="hero-text">
+
 						<div class="hero-text-tablecell">
-							<p class="subtitle">Fresh & Organic</p>
+							<% if (typeof user==='undefined') { %>
+								<div class="hero-btns">
+									<a href="/login" class="bordered-btn">LOGIN</a>
+									<a href="/signup" class="bordered-btn">SIGNUP</a>
+									</div>
+							<% } %>
+								
+							<p class="subtitle p-5">Fresh & Organic</p>
 							<h1>Delicious Seasonal Fruits</h1>
-							<div class="hero-btns">
-								<a href="shop.html" class="boxed-btn">Fruit Collection</a>
-								<a href="contact.html" class="bordered-btn">Contact Us</a>
-							</div>
+	
 						</div>
 					</div>
 				</div>
@@ -96,8 +101,9 @@
 							<a href="/single-product?id=<%= Product[i]._id %>"><img src="images/<%= Product[i].ProductImage[0] %>" alt=""></a>
 						</div>
 						<h3><%= Product[i].ProductName %></h3>
-						<p class="product-price"><span>Per Kg</span> <%= Product[i].Price %> INR </p>
-						<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+						<p class="product-price"><span>Per Kg</span> Rs. <%= Product[i].Price %> 
+					 </p>
+						<a href="" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
 					</div>
 				</div>
 					<% } %>

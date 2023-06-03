@@ -9,6 +9,7 @@ const userLogout= (req,res,next)=>{
     if(req.session.user){
         req.session.user=false
         req.session.destroy();
+        console.log('session destroyed');
         userData=undefined
         res.redirect('/');
     }else{

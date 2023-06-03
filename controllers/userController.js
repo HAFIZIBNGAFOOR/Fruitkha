@@ -4,6 +4,10 @@ const User = require('../models/userSchema');
 const { log } = require('console');
 const bcrypt = require('bcrypt');
 const Product = require('../models/productSchema');
+const mongoosePaginate = require('mongoose-paginate-v2');
+const Category = require('../models/categorySchema');
+const CartItem =require('../models/cart');
+
 const securePassword=async (password)=>{
     try {
         const hashpassword= await bcrypt.hash(password,10)
@@ -35,64 +39,94 @@ const generateOTP=()=>{
     const otp=Math.floor(Math.random()*9000)+1000;
     return otp;
 }
-const sendOTPMail=(email,otpCode)=>{
-    try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              user: 'hafizahmed0303@gmail.com',
-              pass: 'gybktcpfuxveinfv'
-            }
-          });
+// const sendOTPMail=(email,otpCode)=>{
+//     try {
+//         const transporter = nodemailer.createTransport({
+//             service: 'gmail',
+//             auth: {
+//               user: 'hafizahmed0303@gmail.com',
+//               pass: 'gybktcpfuxveinfv'
+//             }
+//           });
           
-          const mailOptions = {
-              from: 'hafizahmed0303@gmail.com',
-              to: email,
-              subject: 'OTP for Registration',
-              text: `Your OTP for registration is: ${otpCode}`
-            };
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                  console.log('Error sending email:', error);
-                  return false
-                } else {
-                  console.log('Email sent:', info.response);
-                  return true;
-                }
-              })     
+//           const mailOptions = {
+//               from: 'hafizahmed0303@gmail.com',
+//               to: email,
+//               subject: 'OTP for Registration',
+//               text: `Your OTP for registration is: ${otpCode}`
+//             };
+//             transporter.sendMail(mailOptions, (error, info) => {
+//                 if (error) {
+//                   console.log('Error sending email:', error);
+//                   return false
+//                 } else {
+//                   console.log('Email sent:', info.response);
+//                   return true;
+//                 }
+//             })     
+//     } catch (error) {
+//         console.log('sending otp failed send otp mail'+error);
+//         return false;
+//     }
+// }
+const sendOTPMail = (email, otpCode) => {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'hafizahmed0303@gmail.com',
+          pass: 'gybktcpfuxveinfv'
+        }
+      });
+  
+      const mailOptions = {
+        from: 'hafizahmed0303@gmail.com',
+        to: email,
+        subject: 'OTP for Registration',
+        text: `Your OTP for registration is: ${otpCode}`
+      };
+  
+      return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log('Error sending email:', error);
+            resolve(false);
+          } else {
+            console.log('Email sent:', info.response);
+            resolve(true);
+          }
+        });
+      });
     } catch (error) {
-        console.log('sending otp failed send otp mail'+error);
-        return false;
+      console.log('Sending OTP failed:', error);
+      return Promise.resolve(false);
     }
-}
-let saavedOtp;
-let naame;
-let email;
-let moobile;
-let paassword;
-// console.log(generateOTP());
+  };
+  
 
+// console.log(generateOTP());
 const sendOTP=async(req,res)=>{
    try {
-    naame=req.body.name;
-    email=req.body.email;
-    moobile=req.body.mobile;
-    paassword=req.body.password;
+    req.session.signupData=req.body
+    let userData = req.body
+    const email=req.body.email
     let otp=generateOTP();
-    saavedOtp=otp;
-    console.log(otp);
+    req.session.OTP=otp;
     const findEmail=await User.findOne({email:req.body.email})
     if(!findEmail){
-        
-         const otpresult=sendOTPMail(email,otp);
+         const otpresult=await sendOTPMail(email,otp);
          if(otpresult){
             res.render('otpverification')
          }else{
-            res.render('userSignup',{message:'Entered email not exist. Please check your email '})
+            res.render('userSignup',{ 
+                errorMessage:'Entered email not exist. Please check your email ',
+                 userData
+            })
          }
     }else{
         res.render('userSignup',{
-            message:'Entered email already exists'
+            errorMessage:` Entered Email already exists try with another Email`,
+            userData
         })
     }
    } catch (error) {
@@ -103,15 +137,13 @@ const sendOTP=async(req,res)=>{
 const verifyOTP=async (req,res)=>{
     try {
         const otp=req.body.otp;
-        console.log(otp+' req body');
-        console.log(saavedOtp);
-        if(otp==saavedOtp){
-            console.log('otp verified');
-            const password=await securePassword(paassword);
+        const user=req.session.signupData
+        if(otp==req.session.OTP){
+            const password=await securePassword(user.password);
             const userData=new User({
-                name:naame,
-                email:email,
-                mobile:moobile,
+                name:user.name,
+                email:user.email,
+                mobile:user.mobile,
                 password:password,
                 blockStatus:false
             });
@@ -129,6 +161,7 @@ const loadHome=async(req,res)=>{
         const product=await Product.find({});
         if(req.session.user){
             const user=req.session.userData;
+            console.log(user);
             res.render('home',{user:user,Product:product})
         }else{
             res.render('home',{Product:product});
@@ -138,53 +171,115 @@ const loadHome=async(req,res)=>{
         console.log(error);
     }
 };
-let verifiedOtp;
+
 let loginEmail;
 const verifyLogin=async (req,res)=>{
     try {
         loginEmail=req.body.email;
         let otp=generateOTP()
-        verifiedOtp=otp;
-        console.log("",otp);
+        req.session.otp=otp;
         const verifyEmail=await User.findOne({email:req.body.email});
-        
         if(verifyEmail){
             if(verifyEmail.blockStatus===false){
-                console.log('email verified');
+                const message=true
                 sendOTPMail(loginEmail,otp);  
-                res.render('loginOTPverify')
+                res.json('mailSuccess')
             }else{
-                res.render('userLogin',{message:'This user is blocked By Admin'})
-            }
-            
+                res.json('userBlocked')
+            }       
         }else{
-            res.render('userLogin',{message:'Entered Email not exist '})
+            res.json(false)
         }
     } catch (error) {
         console.log('verify login error '+error);
     }
 }
-const userVerify=async(req,res)=>{
+const verifyUser=async(req,res)=>{
     try {
-        const loginData=await User.findOne({email:loginEmail})
-        const enteredOTP=req.body.otp;
-        console.log(enteredOTP,"hhhhhhhhh",verifiedOtp);
-        if(verifiedOtp==enteredOTP){
-            console.log('otp matched');
-            req.session.userData=loginData
-            req.session.user=true;
-            res.redirect("/")
+        const otp=req.body.otp;
+        const userData=await User.findOne({email:req.body.email})
+        if(otp){
+            console.log(otp);
+            if(otp==req.session.otp){
+                console.log('otp matched');
+                req.session.userData=userData
+                req.session.user=true;
+                res.redirect('/')
+            }else{
+                res.render('userLogin',{message:'invalid OTP'})
+            }
         }else{
-            res.render('loginOTPVerify',{message:'invalid OTP'})
+            const password=req.body.password;
+            const email=req.body.email;
+            const UserHave=await User.findOne({email:email})
+            const matchedPass= await bcrypt.compare(password,userData.password);
+            if(UserHave){
+                if(matchedPass){
+                    req.session.userData=userData;
+                    req.session.user=true;
+                    res.redirect('/');
+                }else{
+                    res.render('userLogin',{
+                        message:'Entered password is incorrect'
+                    })
+                }
+            }else{
+                res.render('userLogin',{
+                    message:'Entered Email not exists'
+                })
+            }
         }
     } catch (error) {
-        console.log('otpverify error '+error);
+        console.log('this is verify user error '+error);
     }
 }
+
 const loadShop=async (req,res)=>{
     try {
-        const ProductData=await Product.find({});
-        res.render('shop',{Product:ProductData});
+
+        const  currentPage = req.query.page || 1;
+        const pageSize = req.query.size || 6;
+        const category = req.query.category;
+        const categoryList = await Category.find({});
+        let query={}
+        if(category && category!=='All'){
+            query = {Category:category}
+        }
+        const user = req.session.userData;
+        await Product.paginate(query,{page:currentPage,limit:pageSize},function(err,result){
+            if(err){
+                console.log('pagination error '+err);
+            }else{
+                const Product = result.docs;
+                const totalPages = result.totalPages;
+                const maxVisiblePages = 3;
+                let startPage = 1;
+                let endPage = totalPages;
+
+                if (totalPages > maxVisiblePages) {
+                    const halfVisiblePages = Math.floor(maxVisiblePages / 2);
+
+                    if (currentPage <= halfVisiblePages) {
+                        endPage = maxVisiblePages;
+                    } else if (currentPage + halfVisiblePages >= totalPages) {
+                        startPage = totalPages - maxVisiblePages + 1;
+                    } else {
+                        startPage = currentPage - halfVisiblePages;
+                        endPage = currentPage + halfVisiblePages;
+                    }
+                }
+                res.render('shop', {
+                    currentPage,
+                    totalPages,
+                    startPage,
+                    endPage,
+                    Product,
+                    categoryList,
+                    user
+                });
+            
+            }
+        })
     } catch (error) {
         console.log('this is loading shop page error'+error);
     }
@@ -192,10 +287,75 @@ const loadShop=async (req,res)=>{
 const singleProductLoad=async(req,res)=>{
     try {
         const id=req.query.id;
-        const singleProduct=await Product.findById({_id:id});
-        res.render('single-product',{singleProduct:singleProduct});
+        const singleProduct=await Product.findById({_id:id}).populate('Category');
+        const OtherProducts =await Product.find({_id:{$ne:id}}).limit(6);
+        res.render('single-product',{
+            singleProduct:singleProduct,
+            AllProducts:OtherProducts
+        });
     } catch (error) {
         console.log('single product loading error '+error);
+    }
+}
+const addToCart = async (req,res)=>{
+    try {
+        const productId = req.body.id;
+        const userId = req.body.user;
+        const item =await CartItem.findOne({UserId:userId,ProductId:productId});
+        const Product1 = await Product.findById({_id:productId});
+        const ProductPrice =Product1.Price;
+        if(!userId ){
+            res.json(false)
+        }else{
+            const Cart = new CartItem({
+                ProductId:productId,
+                UserId:userId,
+                Total:1*ProductPrice
+            });
+            if(!item){
+                await Cart.save();
+                res.json(true);
+            }else{
+                res.json(true);
+            }
+           
+        }
+        //const item = await Product.findById({_id:id});
+        
+    } catch (error) {
+        console.log(' add to cart erorr  ',error);
+    }
+}
+const loadCart = async(req,res)=>{
+    try {
+        console.log(req.query.id ,' user idddd');
+        const user=req.query.id;
+        const cartItems =await CartItem.find({UserId:user}).populate('ProductId');
+        let Total = 0 
+        cartItems.forEach(element=>{
+            const price = element.ProductId.Price;
+            const quantity = element.Quantity;
+            const productTotal = price * quantity;
+            Total+=productTotal; 
+        })
+        console.log(Total);
+        res.render('cart',{
+            user,
+            cartItems,
+            Total
+        });
+    } catch (error) {
+        console.log('this is laod cart error ',error);
+    }
+}
+const deleteCart = async (req,res)=>{
+    try {
+        const result =await CartItem.findOneAndDelete({UserId:req.body.id,ProductId:req.body.productId});
+        const cartItems = await CartItem.find({UserId:req.body.id}).populate('ProductId');
+        res.json(cartItems);
+        console.log('cart items send success ',cartItems);
+    } catch (error) {
+        console.log('this is delete cart error ',error);
     }
 }
 module.exports={
@@ -205,7 +365,11 @@ module.exports={
     verifyOTP,
     verifyLogin,
     loadHome,
-    userVerify,
+    verifyUser,
+    //userVerify,
     loadShop,
-    singleProductLoad
+    singleProductLoad,
+    addToCart,
+    loadCart,
+    deleteCart
 }

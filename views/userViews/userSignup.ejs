@@ -150,6 +150,16 @@ a{
 				}
 				
 				%>
+				<%  
+				if(typeof errorMessage !=='undefined'){
+					%>
+						<p style="color:red;"><%= errorMessage %></p>
+				
+					<%
+				
+				}
+				
+				%>
 	
 			  <form class="card-body cardbody-color p-lg-5" method="post">
 	
@@ -159,25 +169,25 @@ a{
 				</div> -->
 	
 				<div class="box mb-3">
-				  <input type="text" class="form-control" name="name" id="name" aria-describedby="emailHelp"
+				  <input type="text" value="<%= locals.userData ?  locals.userData.name : ''%>" class="form-control" name="name" id="name" aria-describedby="emailHelp"
 					placeholder="Name">
 					<span id="name-error" style="color:red"></span>
 				</div>
 				<div class="box mb-3">
-					<input type="text" class="form-control" name="email" id="email" aria-describedby="emailHelp"
+					<input type="text"  class="form-control" name="email" id="email" aria-describedby="emailHelp"
 					  placeholder="Email">
 					  <span id="email-error" style="color:red"></span>
 				  </div>
 				 <div class="box mb-3">
-				  <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Mobile">
+				  <input type="text" class="form-control" value="<%= locals.userData ?  locals.userData.mobile : ''%>" name="mobile" id="mobile" placeholder="Mobile">
 				  <span id="mobile-error" style="color:red"></span>
 				</div>
                 <div class="box mb-3">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                    <input type="password" class="form-control" value="<%= locals.userData ?  locals.userData.password : ''%>" name="password" id="password" placeholder="Password">
 					<span id="password-error" style="color:red"></span>
 				</div>
                   <div class="box mb-3">
-                    <input type="password" class="form-control" name="confirmpass" id="confirmpass" placeholder="Confirm Password">
+                    <input type="password" class="form-control" name="confirmpass" value="<%= locals.userData ?  locals.userData.confirmpass : ''%>" id="confirmpass" placeholder="Confirm Password">
 					<span id="confirmpass-error" style="color:red"></span>
 				</div>
 				<div class="text-center"><button type="submit" id="registerButton" class="btn btn-color px-5 mb-5 w-100">Continue</button></div>

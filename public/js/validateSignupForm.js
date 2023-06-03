@@ -97,7 +97,6 @@ document.getElementById("registerButton").addEventListener("click", (event) => {
   }
   if(!isFormValid) {
     event.preventDefault();
-    alert("Form is not valid!");
   } else {
     form.submit();
   }

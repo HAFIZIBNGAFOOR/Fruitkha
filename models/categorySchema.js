@@ -8,6 +8,10 @@ const categorySchema=new mongoose.Schema({
     categoryImage:{
         type:String,
         required:true
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
     }
 })
 const Category=mongoose.model("Category",categorySchema);

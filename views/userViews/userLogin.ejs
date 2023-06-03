@@ -140,9 +140,8 @@ a{
 			 <h3 class="text-center text-dark mt-5">Login </h3>
 			<!-- <div class="text-center mb-5 text-dark">Made with bootstrap</div> -->
 			<div class="card my-5"> 
-				
-	
-			  <form  method="post" onsubmit="return validate()" class="card-body cardbody-color p-lg-5">
+					
+			<form  method="post" action="/login"  class="card-body cardbody-color p-lg-5">
 				
 				<div class="text-center">
 				  <img src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png" class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
@@ -158,15 +157,34 @@ a{
 				}
 				
 				%>
+				<div class="btn-group pb-3">
+					<label class="btn btn-outline-success passwordLogin" >
+					  <span class="btn-check" name="loginMethod"  value="password" id="passwordRadio" autocomplete="off"> Login with Password </span>
+					</label>
+					<label class="btn btn-outline-success otpLogin ">
+					  <span class="btn-check" name="loginMethod" value="otp" id="otpRadio" autocomplete="off"> Login with OTP </span>
+					</label>
+				  </div>
 				<div class="mb-3">
 					<p id="emailError" style="color: red;"></p>
-				  <input type="text" id="email" class="form-control"  aria-describedby="emailHelp" name="email"
-					placeholder="Email">
-				</div>
-				<!-- <div class="mb-3">
-				  <input type="password" class="form-control" id="password" placeholder="password">
-				</div> -->
-				<div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100">Continue</button></div>
+				  <input type="text"  id="email" class="form-control emailId"  aria-describedby="emailHelp" name="email" placeholder="Email">
+				</div>				  
+				  <div id="otpContainer" class="d-none">
+					<button type="button" id="sendOTP" class="btn btn-outline-primary btn-sm mb-2">Send OTP</button>
+					<p id="messageOTP" class="d-none text-success">OTP Send Successfully </p>
+					<p id="errorOTP" class="d-none text-danger">User is blocked By Admin </p>
+					<p id="noMailOTP" class="d-none text-danger">Entered Email not exists </p>
+
+					 <input type="" id="otp" name="otp" value="" class="form-control mb-3" placeholder="OTP" required>
+				  </div>
+				  <div id="passwordContainer" class="d-none">
+					<input type="password" id="password" name="password" value="" class="form-control mb-3" placeholder="Password" required>
+					<!-- <button id="loginButton"  class="btn btn-color px-5 mb-3 w-100 text-white" type="submit">Login</button> -->
+				  </div>
+
+				  <p style="color: red;" id="submitError"></p>
+					<button type="submit" id="continueButton" class="btn btn-color px-5 mb-5 w-100 text-white">Login</button>
+				<!-- <div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100">Continue</button></div> -->
 				<div id="emailHelp" class="form-text text-center mb-5 text-dark">Not
 				  Registered? <a href="/signup" class="text "> Create an
 					Account</a>
@@ -177,33 +195,7 @@ a{
 		</div>
 	  </div>
 	</div>
-
-	<!-- contact form -->
 	
-	<!-- end contact form -->
-
-	<!-- find our location -->
-	<!-- <div class="find-location blue-bg">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12 text-center">
-					<p> <i class="fas fa-map-marker-alt"></i> Find Our Location</p>
-				</div>
-			</div>
-		</div>
-	</div> -->
-	<!-- end find our location -->
-
-	<!-- google map section -->
-	<!-- <div class="embed-responsive embed-responsive-21by9">
-		<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26432.42324808999!2d-118.34398767954286!3d34.09378509738966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2bf07045279bf%3A0xf67a9a6797bdfae4!2sHollywood%2C%20Los%20Angeles%2C%20CA%2C%20USA!5e0!3m2!1sen!2sbd!4v1576846473265!5m2!1sen!2sbd" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" class="embed-responsive-item"></iframe>
-	</div> -->
-	<!-- end google map section -->
-
-
-	<!-- footer -->
-	
-	<!-- end footer -->
 	
 	<!-- copyright -->
 	<div class="copyright">
@@ -266,6 +258,115 @@ a{
 			}
 
 		}
+		const otpRadio = document.getElementById('otpRadio');
+		const passwordRadio = document.getElementById('passwordRadio');
+		const otpContainer = document.getElementById('otpContainer');
+		const continueButton = document.getElementById('continueButton');
+		const passwordContainer = document.getElementById('passwordContainer');
+		const loginButton = document.getElementById('loginButton');
+		const submitButton = document.querySelector('button[type="submit"]');
+		const otpLogin = document.querySelector('.otpLogin')
+		const passwordLogin = document.querySelector('.passwordLogin')
+		const form = document.querySelector('form')
+		const email = document.querySelector('.emailId')	;
+		const sendOTP=document.getElementById('sendOTP');
+		const passwordInput = document.getElementById('password');
+		const otpInput = document.getElementById('otp');
+
+		otpRadio.addEventListener('click', function() {
+			otpInput.value=''
+			passwordInput.value=''
+			otpLogin.classList.add('active')
+			passwordLogin.classList.remove('active')
+			passwordContainer.classList.add('d-none')
+			passwordContainer.classList.remove('d-block')
+			otpContainer.classList.remove('d-none')
+			otpContainer.classList.add('d-block')
+			console.log('displayed block');
+
+		});
+
+		passwordRadio.addEventListener('click', function() {
+			passwordInput.value = '';
+			otpContainer.value = '';
+			console.log('clicked password');
+			otpLogin.classList.remove('active')
+			passwordLogin.classList.add('active')
+			passwordContainer.classList.remove('d-none')
+			passwordContainer.classList.add('d-block')
+			otpContainer.classList.add('d-none')
+			otpContainer.classList.remove('d-block')
+
+		});
+		submitButton.addEventListener('click',function(event){
+			event.preventDefault();
+			const emailValue=email.value.trim();
+			const otp =otpInput.value.trim();
+			const password= passwordInput.value.trim();
+
+			// otpInput=otp;
+			// passwordInput.value = password;
+			if (otp.length >3 || password.length > 4) {
+				submitButton.closest('form').submit();
+				submitError.textContent='';
+			}else{
+				const submitError=document.getElementById('submitError')
+				submitError.textContent='Enter Valid OTP Or Password '
+			}
+			
+		})
+		// loginButton.addEventListener('click', function() {
+		// submitButton.style.display = 'block';
+		// });
+		sendOTP.addEventListener('click',function(){
+			const email = document.querySelector('.emailId').value
+			const emailError=document.getElementById('emailError')
+			const emailRegex=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+/
+			if(!emailRegex.test(email)){
+				emailError.textContent='Enter a valid email'
+			}else{
+				emailError.textContent=''
+				const url='login/otp'
+				fetch(url,{
+				method: 'POST',
+				headers: {
+				'Content-Type': 'application/json'
+				},
+					body: JSON.stringify({ email: email })
+				}).then(response=> response.json())
+				// .then(data => {
+				// 	console.log('hghgjhgg',data);
+
+				.then(data=>{
+					const messageError = document.getElementById('errorOTP');
+					const messageElement = document.getElementById('messageOTP');
+					const nomailError = document.getElementById('noMailOTP');
+					if(data==='mailSuccess'){
+						console.log(data);
+						messageElement.classList.remove('d-none')
+						messageElement.classList.add( 'd-block')
+						messageError.classList.add('b-none')
+						messageError.classList.remove('b-block')
+					}else if(data==='userBlocked'){
+						messageError.classList.remove('d-none')
+						messageError.classList.add( 'd-block')
+						messageElement.classList.remove('d-block')
+						messageElement.classList.add( 'd-none')
+						nomailError.classList.remove('d-block')
+						nomailError.classList.add( 'd-none')
+					}else {
+						nomailError.classList.remove('d-none')
+						nomailError.classList.add('d-block')
+						messageError.classList.remove('d-block')
+						messageError.classList.add('d-none')
+						messageElement.classList.remove('d-block')
+						messageElement.classList.add('d-none')
+					}
+				})
+			}
+		})
+
+
 	</script>
 	
 <%- include('../layouts/footer.ejs') %>

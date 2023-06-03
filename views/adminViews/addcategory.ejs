@@ -17,7 +17,7 @@
 				}
 				
 				%>
-                <form class="form-outline mb-4" onsubmit=" return validate()" enctype="multipart/form-data" action="/admin/category/add" method="post">
+                <form class="form-outline mb-4" id="form"  enctype="multipart/form-data" action="/admin/category/add" method="post">
                 <h4>Category</h4> 
                 <h6 class="font-weight-light">Add new Categories</h6>
                 <form class="pt-3">
@@ -26,7 +26,7 @@
                     <input type="text" name="categoryName" id="categoryName" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Category Name">
                   </div>
                    <div class="form-group">
-                    <input type="file" id="image" required  name="file" accept="image/*" class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image">
+                    <input type="file" id="image"   name="file" accept="image/*" class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image">
                   </div>
                 
                   <!-- <div class="form-group">
@@ -65,16 +65,20 @@
     <script src="/assets/js/misc.js"></script> --> 
     <!-- endinject -->
     <script>
-     function validate(){
+      const namePattern = /^[A-Za-z]{4,10}$/;
       let name=document.getElementById('categoryName');
       let nameError=document.getElementById('nameError')
-      if(name.value<4){
-        nameError.textContent='Please enter a valid Category name'
-        return false
-      }else{
-        nameError.textContent='';
-        return true
+      let form =document.getElementById('form');
+      const nameFunction =  () => {
+        if (!namePattern.test(name.value)) {
+          nameError.textContent = 'Invalid name '
+          event.preventDefault();
+          return false
+        } else {
+          nameError.textContent = ''
+          return true
+        }
       }
-     }
+     form.addEventListener('submit',nameFunction);
     </script>
 <%- include('../layouts/adminFooter.ejs') %>

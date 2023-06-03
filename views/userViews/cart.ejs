@@ -1,99 +1,10 @@
 <%- include('../layouts/header.ejs') %>
-	
-	<!--PreLoader-->
-    <div class="loader">
-        <div class="loader-inner">
-            <div class="circle"></div>
-        </div>
-    </div>
-    <!--PreLoader Ends-->
-	
-	<!-- header -->
-	<div class="top-header-area" id="sticker">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12 col-sm-12 text-center">
-					<div class="main-menu-wrap">
-						<!-- logo -->
-						<div class="site-logo">
-							<a href="index.html">
-								<img src="assets/img/logo.png" alt="">
-							</a>
-						</div>
-						<!-- logo -->
+<% if(typeof user !== "undefined"){ %>
+	<%- include('userLogged') %>
 
-						<!-- menu start -->
-						<nav class="main-menu">
-							<ul>
-								<li class="current-list-item"><a href="#">Home</a>
-									<ul class="sub-menu">
-										<li><a href="index.html">Static Home</a></li>
-										<li><a href="index_2.html">Slider Home</a></li>
-									</ul>
-								</li>
-								<li><a href="about.html">About</a></li>
-								<li><a href="#">Pages</a>
-									<ul class="sub-menu">
-										<li><a href="404.html">404 page</a></li>
-										<li><a href="about.html">About</a></li>
-										<li><a href="cart.html">Cart</a></li>
-										<li><a href="checkout.html">Check Out</a></li>
-										<li><a href="contact.html">Contact</a></li>
-										<li><a href="news.html">News</a></li>
-										<li><a href="shop.html">Shop</a></li>
-									</ul>
-								</li>
-								<li><a href="news.html">News</a>
-									<ul class="sub-menu">
-										<li><a href="news.html">News</a></li>
-										<li><a href="single-news.html">Single News</a></li>
-									</ul>
-								</li>
-								<li><a href="contact.html">Contact</a></li>
-								<li><a href="shop.html">Shop</a>
-									<ul class="sub-menu">
-										<li><a href="shop.html">Shop</a></li>
-										<li><a href="checkout.html">Check Out</a></li>
-										<li><a href="single-product.html">Single Product</a></li>
-										<li><a href="cart.html">Cart</a></li>
-									</ul>
-								</li>
-								<li>
-									<div class="header-icons">
-										<a class="shopping-cart" href="cart.html"><i class="fas fa-shopping-cart"></i></a>
-										<a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
-									</div>
-								</li>
-							</ul>
-						</nav>
-						<a class="mobile-show search-bar-icon" href="#"><i class="fas fa-search"></i></a>
-						<div class="mobile-menu"></div>
-						<!-- menu end -->
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end header -->
-
-	<!-- search area -->
-	<div class="search-area">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12">
-					<span class="close-btn"><i class="fas fa-window-close"></i></span>
-					<div class="search-bar">
-						<div class="search-bar-tablecell">
-							<h3>Search For:</h3>
-							<input type="text" placeholder="Keywords">
-							<button type="submit">Search <i class="fas fa-search"></i></button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end search arewa -->
+<% }else{ %>
+	<%- include('noUser') %>
+	<% } %>
 	
 	<!-- breadcrumb-section -->
 	<div class="breadcrumb-section breadcrumb-bg">
@@ -127,36 +38,21 @@
 									<th class="product-total">Total</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="tablebody" data-cartitems="<%= JSON.stringify(cartItems) %>">
+								<% for( let i = 0; i < cartItems.length; i++ ) { %>
 								<tr class="table-body-row">
-									<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-									<td class="product-image"><img src="assets/img/products/product-img-1.jpg" alt=""></td>
-									<td class="product-name">Strawberry</td>
-									<td class="product-price">$85</td>
-									<td class="product-quantity"><input type="number" placeholder="0"></td>
-									<td class="product-total">1</td>
+									<td class="product-remove" onclick="deleteCart('<%= user %>' ,' <%=cartItems[i]._id %>' , '<%=cartItems[i].ProductId._id%>')" id="deleteItem" ><i  class="far fa-window-close"></i></td>
+									<td class="product-image"><img src="/images/<%= cartItems[i].ProductId.ProductImage[0] %>" alt=""></td>
+									<td class="product-name"><%= cartItems[i].ProductId.ProductName %></td>
+									<td class="product-price"><%= cartItems[i].ProductId.Price %></td>
+									<td class="product-quantity" ><input id="quantityInput<%= i %>" type="number" placeholder="<%= cartItems[i].Quantity %>" min="1" max="<%= cartItems[i].ProductId.Quantity %>" ></td>
+									<td class="product-total" id="total<%= i %>"><%= cartItems[i].Total%></td>
 								</tr>
-								<tr class="table-body-row">
-									<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-									<td class="product-image"><img src="assets/img/products/product-img-2.jpg" alt=""></td>
-									<td class="product-name">Berry</td>
-									<td class="product-price">$70</td>
-									<td class="product-quantity"><input type="number" placeholder="0"></td>
-									<td class="product-total">1</td>
-								</tr>
-								<tr class="table-body-row">
-									<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-									<td class="product-image"><img src="assets/img/products/product-img-3.jpg" alt=""></td>
-									<td class="product-name">Lemon</td>
-									<td class="product-price">$35</td>
-									<td class="product-quantity"><input type="number" placeholder="0"></td>
-									<td class="product-total">1</td>
-								</tr>
+								<% } %>
 							</tbody>
 						</table>
 					</div>
 				</div>
-
 				<div class="col-lg-4">
 					<div class="total-section">
 						<table class="total-table">
@@ -169,25 +65,25 @@
 							<tbody>
 								<tr class="total-data">
 									<td><strong>Subtotal: </strong></td>
-									<td>$500</td>
+									<td id="cartTotal">Rs.<%= Total %></td>
 								</tr>
 								<tr class="total-data">
 									<td><strong>Shipping: </strong></td>
-									<td>$45</td>
+									<td>Free Shipping</td>
 								</tr>
 								<tr class="total-data">
 									<td><strong>Total: </strong></td>
-									<td>$545</td>
+									<td id="getFull">Rs.<%= Total %></td>
 								</tr>
 							</tbody>
 						</table>
 						<div class="cart-buttons">
-							<a href="cart.html" class="boxed-btn">Update Cart</a>
-							<a href="checkout.html" class="boxed-btn black">Check Out</a>
+							<a href="/updateCart" class="boxed-btn">Update Cart</a>
+							<a href="/checkout" class="boxed-btn black">Check Out</a>
 						</div>
 					</div>
 
-					<div class="coupon-section">
+					<!-- <div class="coupon-section">
 						<h3>Apply Coupon</h3>
 						<div class="coupon-form-wrap">
 							<form action="index.html">
@@ -195,7 +91,7 @@
 								<p><input type="submit" value="Apply"></p>
 							</form>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
@@ -209,19 +105,19 @@
 				<div class="col-lg-12">
 					<div class="logo-carousel-inner">
 						<div class="single-logo-item">
-							<img src="assets/img/company-logos/1.png" alt="">
+							<img src="/img/company-logos/1.png" alt="">
 						</div>
 						<div class="single-logo-item">
-							<img src="assets/img/company-logos/2.png" alt="">
+							<img src="/img/company-logos/2.png" alt="">
 						</div>
 						<div class="single-logo-item">
-							<img src="assets/img/company-logos/3.png" alt="">
+							<img src="/img/company-logos/3.png" alt="">
 						</div>
 						<div class="single-logo-item">
-							<img src="assets/img/company-logos/4.png" alt="">
+							<img src="/img/company-logos/4.png" alt="">
 						</div>
 						<div class="single-logo-item">
-							<img src="assets/img/company-logos/5.png" alt="">
+							<img src="/img/company-logos/5.png" alt="">
 						</div>
 					</div>
 				</div>
@@ -254,11 +150,11 @@
 					<div class="footer-box pages">
 						<h2 class="widget-title">Pages</h2>
 						<ul>
-							<li><a href="index.html">Home</a></li>
-							<li><a href="about.html">About</a></li>
-							<li><a href="services.html">Shop</a></li>
-							<li><a href="news.html">News</a></li>
-							<li><a href="contact.html">Contact</a></li>
+							<li><a href="/">Home</a></li>
+							<li><a href="">About</a></li>
+							<li><a href="/shop">Shop</a></li>
+							<li><a href="">News</a></li>
+							<li><a href="">Contact</a></li>
 						</ul>
 					</div>
 				</div>
@@ -322,5 +218,111 @@
 	<script src="/js/sticker.js"></script>
 	<!-- main js -->
 	<script src="/js/main.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+	<script>
+		// const deleteCart = document.getElementById('deleteItem')
+		const tableBody = document.getElementById('tablebody');
+		const cartItems = JSON.parse(tableBody.getAttribute('data-cartitems'));
+		function updateCart(){
+				let cartTotal=0;
+				const cartTotalCell = document.getElementById('cartTotal');
+				const cartFull = document.getElementById('getFull')
+				cartItems.forEach((item,j)=>{
+					let itemQuantity = parseInt(document.getElementById(`quantityInput${j}`).value);
+					const itemPrice = parseInt(item.ProductId.Price);
+					if (isNaN(itemQuantity) ) {
+						itemQuantity=1;
+					}
+						cartTotal += itemQuantity * itemPrice;
+				});
+				console.log(cartTotal,' this is carttotal');
+				cartTotalCell.textContent=cartTotal;
+				cartFull.textContent=cartTotal;
+				console.log('cart updated');
+
+		}
+
+		console.log(cartItems);
+			cartItems.forEach((cartItem,i)=>{
+				const quantityInput= document.getElementById(`quantityInput${i}`);
+				const total = document.getElementById(`total${i}`);
+
+				quantityInput.addEventListener('change',()=>{
+					const enteredQauntity = parseInt(quantityInput.value);
+					const Price = parseInt(cartItem.ProductId.Price);
+					const TotalPrice = parseInt(enteredQauntity*Price);
+					total.textContent=TotalPrice;
+					updateCart();
+				});
+				
+			})
+			updateCart();
+
+		function deleteCart(user,cartId,productId){
+			console.log(user ,' + ',cartId,' =' ,productId);
+			fetch('/delete-cartItem',{
+				method:'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id: user ,cartId:cartId,productId:productId})
+			})
+			.then(response=>response.json())
+			.then(cartItems=>{
+				const table = document.getElementById('tablebody');
+				table.innerHTML ='';
+				cartItems.forEach((cartItem,i) => {
+					const row = document.createElement('tr');
+					row.className ='table-body-row'
+
+					const removeCart = document.createElement('td');
+					removeCart.className = 'product-remove';
+					removeCart.onclick = ()=>deleteCart(user, cartItem._id, cartItem.ProductId._id);
+					removeCart.innerHTML = '<i class="far fa-window-close"></i>';
+					row.appendChild(removeCart);
+
+					
+					const imageCell = document.createElement('td');
+					imageCell.className = 'product-image';
+					const image = document.createElement('img');
+					image.src ='/images/'+cartItem.ProductId.ProductImage[0]
+					image.alt='';
+					imageCell.appendChild(image);
+					row.appendChild(imageCell);
+
+					const nameCell = document.createElement('td');
+					nameCell.className = 'product-name';
+					nameCell.textContent =cartItem.ProductId.ProductName;
+					row.appendChild(nameCell);
+
+					const priceCell = document.createElement('td');
+					priceCell.className = 'product-price';
+					priceCell.textContent = cartItem.ProductId.Price;
+					row.appendChild(priceCell);
+					
+					const quantity =document.createElement('td');
+					quantity.className = 'product-quantity';
+					const quantityInput = document.createElement('input');
+        			quantityInput.type = 'number';
+					quantityInput.placeholder = cartItem.Quantity;
+					quantity.addEventListener('change',()=>{
+						updateCart()
+					})
+					quantity.appendChild(quantityInput);
+					row.appendChild(quantity);
+
+					const total = document.createElement('td');
+					total.className='product-total';
+					total.id =`total$(i)`
+					total.textContent = '1';
+					row.appendChild(total);
+
+					table.appendChild(row)
+				});
+				updateCart()
+			})
+		};
+	</script>
 
 <%- include('../layouts/footer.ejs') %>

@@ -5,29 +5,42 @@
 <% }else{ %>
 	<%- include('noUser') %>
 	<% } %>
-	<!-- <style>
-	.single-product-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+	<style>
+		.product-name {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
+		}
+		
+		.popup {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		}
 
-.product-image {
-  height: 200px; /* Adjust the height as per your needs */
-  width: 100%;
-  object-fit: cover; /* Ensure the image fills the container without distortion */
-}
+		.popup-content {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: #fff;
+		padding: 20px;
+		}
 
-.product-details {
-  text-align: center;
-  margin-top: 10px; /* Adjust the spacing between elements */
-}
+		.popup-content h2 {
+		margin-top: 0;
+		}
 
+		.popup-content button {
+		margin-top: 10px;
+		}
 
-	</style> -->
-	<!-- end search arewa -->
-	
-	<!-- breadcrumb-section -->
+	</style>
 	<div class="breadcrumb-section breadcrumb-bg">
 		<div class="container">
 			<div class="row">
@@ -50,8 +63,12 @@
                 <div class="col-md-12">
                     <div class="product-filters">
                         <ul>
-                            <li class="active" data-filter="*">All</li>
-                            <li data-filter=".strawberry">Category</li>
+							<!-- removed active class -->
+							<li  value="All" class="categoryId" data-filter=".strawberry">All</li>
+							<% for( let i = 0; i < categoryList.length; i++ ) { %>
+							
+                            <li data-filter=".strawberry" value="<%= categoryList[i]._id %>" class="categoryId" id="category"> <%= categoryList[i].categoryName %> </li>
+							<% } %>
                         </ul>
                     </div>
                 </div>
@@ -60,32 +77,39 @@
 				<% if (Product.length>0) { %>
 					<% for( let i = 0; i < Product.length; i++ ) { %>
 						<% if (Product.length<2) { %>
-							<div class="col-lg-6 col-md-4 text-center ">					
+							<div class="col-lg-6 col-md-6 text-center ">					
 						
 								<div class="single-product-item ">
 								 
 								 <div class="product-image" >
-									 <a href="/singleProduct?id=<%= Product[i]._id %>">
-										<img class="img-fit" src="/images/<%= Product[i].ProductImage[2] %>" alt="">
+									<a href="/single-product?id=<%= Product[i]._id %>">
+									<img class="img-fit escape" src="/images/<%= Product[i].ProductImage[2] %>" alt="">
+									
+								
+									<h3><%= Product[i].ProductName %></h3>
+									<p class="product-price"><span>Per Kg</span> <%= Product[i].Price %>INR </p>
 									</a>
-								 </div>
-								 <h3><%= Product[i].ProductName %></h3>
-								 <p class="product-price"><span>Per Kg</span> <%= Product[i].Price %>INR </p>
-								 <a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+								</div>
+									<a href="" value="<%= Product[i]._id %> <% user?user:'' %>" class="cart-btn addToCart"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
 
-							 </div>
-						 </div>
+							 	</div>
+						 	</div>
 							<% } else{%>
-				<div class="col-lg-3 col-md-6 text-center ">					
+						<div class="col-lg-4 col-md-6 text-center ">					
 						
 					   <div class="single-product-item ">
 						
 						<div class="product-image">
-							<a href="/singleProduct?id=<%= Product[i]._id %>"><img class="img-fluid" src="/images/<%= Product[i].ProductImage[0] %>" alt=""></a>
+							<a href="/single-product?id=<%= `${Product[i]._id}` %>">
+								<!-- <script> console.log(`${Product[i].ProductName}`); </script> -->
+								<img class="img-fluid" src="/images/<%= Product[i].ProductImage[1] %>" alt="">
+							</a>				
 						</div>
-						<h3><%= Product[i].ProductName %></h3>
-						<p class="product-price"><span>Per Kg</span> <%= Product[i].Price %>INR </p>
-						<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+						<h3 class="product-name"><%= Product[i].ProductName %></h3>
+						<p class="product-price"><span>Per Kg</span> Rs. <%= Product[i].Price %> </p>
+						<a  value=<%=` ${Product[i]._id}${user ? `,${user._id}` : ''} `%> class="cart-btn addToCart"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+					    <!-- <p class="text-success d-none" id="Added" > Item Added to Cart </p>
+						<p class=" text-danger d-none" id="Failed"> Please Login to Add to Cart  </p> -->
 					</div>
 				</div>
 				<% } %>
@@ -94,19 +118,25 @@
 					<div>No Products Found</div>
 					<% } %>
 			</div>
-</div>
+			
 			
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-lg-12 text-center">
 			<div class="pagination-wrap">
-				<ul>
-					<li><a href="#"></a></li>
-					<li><a class="active"href="#">1</a></li>
-					<li><a  href="#">2</a></li>
-					<li><a href="#">3</a></li>
-					<li><a href="#">Next</a></li>
+				<ul>					
+						<% if ( currentPage > 1 ) { %>
+						 
+						
+					<li><a href="/shop/?page=<%= currentPage - 1 %>">Previous</a></li>
+					<% } %>
+					<% for( let i = startPage; i <= endPage; i++ ) { %>
+					<li><a class="<% currentPage === i ? 'active':'' %>" href= " /shop?page=<%= i %>" > <%= i %></a></li>
+					<% } %>
+					<% if ( currentPage < totalPages ) { %>					 
+					<li><a href="/shop/?page=<%= currentPage+1 %>">Next</a></li>
+					<% } %>
 				</ul>
 			</div>
 		</div>
@@ -212,7 +242,16 @@
 		</div>
 	</div>
 	<!-- end copyright -->
-	
+	<button id="openPopupBtn">Open Popup</button>
+
+		<div id="popup" class="popup">
+		<div class="popup-content">
+			<h2>Popup Content</h2>
+			<p>This is the content of the popup.</p>
+			<button id="closePopupBtn">Close</button>
+		</div>
+		</div>
+
 	<!-- jquery -->
 	<script src="/js/jquery-1.11.3.min.js"></script>
 	<!-- bootstrap -->
@@ -233,5 +272,68 @@
 	<script src="/js/sticker.js"></script>
 	<!-- main js -->
 	<script src="/js/main.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		const category =document.querySelectorAll('li.categoryId')
+
+		category.forEach(element=>{
+			element.addEventListener('click',function(){
+				const categoryValue = element.getAttribute('value');
+				const url = `/shop/?category=${categoryValue}`
+				window.location.href=url;  
+			})
+		})
+
+		const cart = document.querySelectorAll('.addToCart');
+
+			cart.forEach(event => {
+			event.addEventListener('click', function() {
+				const id = event.getAttribute('value');
+				const array = id.split(',');
+				console.log(id,' this is id total ' ,array,'  array' );
+				const productId = array[0];
+				const user = array[1];
+				console.log(user);
+
+				fetch('/add-to-cart', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id: productId, user: user })
+				})
+				.then(response => response.json())
+				.then(added => {
+					const success = document.getElementById('Added');
+					const error = document.getElementById('Failed');
+
+					if (added) {
+						Swal.fire({
+						title: " Item Added!",
+						text: "Product added to cart successfully!",
+						icon: "success",
+						buttonsStyling: false,
+						confirmButtonText: "OK",
+						customClass: {
+						confirmButton: "btn btn-primary"
+						}
+					});
+					} else {
+						Swal.fire({
+						title: "Failed!",
+						text: "Please Login/ SignUp To add to cart!",
+						icon: "error",
+						buttonsStyling: false,
+						confirmButtonText: "OK",
+						customClass: {
+						confirmButton: "btn btn-primary"
+						}
+					});
+					}
+				});
+			});
+			});
+
+	</script>
 
 	<%- include('../layouts/footer.ejs') %>
