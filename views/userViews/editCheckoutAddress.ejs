@@ -1,0 +1,54 @@
+<%- include('../layouts/header.ejs') %>
+<div class="checkout-section pt-150 pb-150">
+    <div class="container">
+     
+      <h4 style="color: #F28123; text-align: center;"> Edit Your Address </h4>
+      <hr>
+      <%  
+				if(typeof message !=='undefined'){
+					%>
+						<p style="color:red;"><%= message %></p>
+				
+					<%
+				
+				}
+				
+				%>
+        <div class="row">
+            <div class="col-lg-8 col-lg-8 offset-lg-2">
+                <div class="checkout-accordion-wrap">
+                     <div class="accordion" id="accordionExample">
+                      <div class="card single-accordion">
+                        <div class="card-header" id="headingOne">
+                          <h5 class="mb-0">
+                            <div class="btn " type="button"  aria-expanded="true" aria-controls="collapseOne">
+                              
+                            </div>
+                          </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> 
+                          <div class="card-body">
+                            <div class="billing-address-form">
+                                <form method="post" action="/editCheckOutAddress">
+                                    <input type="hidden" name="userId" value="<%= user._id%>">
+                                    <p><input type="text" name="name" placeholder="Address Name" value="<%=address.name %>"></p>
+                                    <p><input type="tel" name="number" placeholder="Number" value="<%=address.number %>"></p>
+                                    <p><input type="text" name="house" placeholder="House" value="<%=address.house %>"></p>
+                                    <p><input type="text" name="city" placeholder="City" value="<%=address.city %>"></p>
+                                    <p><input type="text" name="state" placeholder="State" value="<%=address.state %>"></p>
+                                    <p><input type="tel" name="pincode" placeholder="Pincode" value="<%=address.pincode %>"></p>
+                                    <button style="color: #F28123;" type="submit" class="btn btn-md">Submit</button>
+                                  </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>    
+            </div>
+        </div>        
+    </div> 
+    </div>
+    <%- include('../layouts/footer.ejs') %>
+    

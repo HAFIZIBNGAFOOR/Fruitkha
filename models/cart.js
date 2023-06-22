@@ -18,6 +18,10 @@ const Cart = mongoose.Schema({
     Total:{
         type:Number,
         required: true
+    },
+    subTotal:{
+        type:Number,
+        required:true,
     }
 })
 const CartItem = mongoose.model('CartItem',Cart);

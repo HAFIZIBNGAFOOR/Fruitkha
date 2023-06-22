@@ -174,7 +174,7 @@ a{
 					<span id="name-error" style="color:red"></span>
 				</div>
 				<div class="box mb-3">
-					<input type="text"  class="form-control" name="email" id="email" aria-describedby="emailHelp"
+					<input type="text"  class="form-control" value="<%= locals.userData ?  locals.userData.email : ''%>" name="email" id="email" aria-describedby="emailHelp"
 					  placeholder="Email">
 					  <span id="email-error" style="color:red"></span>
 				  </div>

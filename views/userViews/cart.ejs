@@ -28,7 +28,8 @@
 				<div class="col-lg-8 col-md-12">
 					<div class="cart-table-wrap">
 						<table class="cart-table">
-							<thead class="cart-table-head">
+							<% if (cartItems.length > 0) { %>
+							<thead class="cart-table-head">	
 								<tr class="table-head-row">
 									<th class="product-remove"></th>
 									<th class="product-image">Product Image</th>
@@ -39,17 +40,26 @@
 								</tr>
 							</thead>
 							<tbody id="tablebody" data-cartitems="<%= JSON.stringify(cartItems) %>">
+																
 								<% for( let i = 0; i < cartItems.length; i++ ) { %>
-								<tr class="table-body-row">
+								<tr class="table-body-row " value="<%= user %>">
 									<td class="product-remove" onclick="deleteCart('<%= user %>' ,' <%=cartItems[i]._id %>' , '<%=cartItems[i].ProductId._id%>')" id="deleteItem" ><i  class="far fa-window-close"></i></td>
 									<td class="product-image"><img src="/images/<%= cartItems[i].ProductId.ProductImage[0] %>" alt=""></td>
 									<td class="product-name"><%= cartItems[i].ProductId.ProductName %></td>
 									<td class="product-price"><%= cartItems[i].ProductId.Price %></td>
-									<td class="product-quantity" ><input id="quantityInput<%= i %>" type="number" placeholder="<%= cartItems[i].Quantity %>" min="1" max="<%= cartItems[i].ProductId.Quantity %>" ></td>
-									<td class="product-total" id="total<%= i %>"><%= cartItems[i].Total%></td>
+									<td class="product-quantity" ><input class="product-quantity-input" name="quantity" id="quantityInput<%= i %>" data-index="<%= i %>" data-product-id="<%= cartItems[i].ProductId._id %>" type="number" placeholder="<%= cartItems[i].Quantity %>" min="1" max="<%= cartItems[i].ProductId.Quantity %>" onchange="updateCart(event)"  oninput="validateQuantity(this)" ></td>
+									<td class="product-total " id="total<%= i %>"><%= cartItems[i].Total%></td>
+									<%if(cartItems[i].ProductId.Quantity === 0 ){%>
+										<h6 class="mb-0" style="color:red">Out of stock</h6>
+									  <%}%>
 								</tr>
-								<% } %>
+								<% } %>								
 							</tbody>
+							<% }else{ %>
+								
+								<img src="/img/cart.webp" alt="" style="width: 40vw; height: 35vh;"> 
+								<span> Cart Empty</span>
+                              <%}%>
 						</table>
 					</div>
 				</div>
@@ -62,10 +72,10 @@
 									<th>Price</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="totaTable">
 								<tr class="total-data">
 									<td><strong>Subtotal: </strong></td>
-									<td id="cartTotal">Rs.<%= Total %></td>
+									<td id="allTotal">Rs.<%= subTotal %></td>
 								</tr>
 								<tr class="total-data">
 									<td><strong>Shipping: </strong></td>
@@ -78,8 +88,13 @@
 							</tbody>
 						</table>
 						<div class="cart-buttons">
-							<a href="/updateCart" class="boxed-btn">Update Cart</a>
-							<a href="/checkout" class="boxed-btn black">Check Out</a>
+							<% if (!Total) { %>
+								<a href="/Checkout?id=<%= user %>" class="boxed-btn black" hidden>Check Out</a>
+
+							<% } else{%>
+							<!-- <a  class="boxed-btn updateCart">Update Cart</a> -->
+							<a href="/Checkout?id=<%= user %>" class="boxed-btn black">Check Out</a>
+							<% } %>
 						</div>
 					</div>
 
@@ -222,42 +237,89 @@
 
 	<script>
 		// const deleteCart = document.getElementById('deleteItem')
-		const tableBody = document.getElementById('tablebody');
-		const cartItems = JSON.parse(tableBody.getAttribute('data-cartitems'));
-		function updateCart(){
-				let cartTotal=0;
-				const cartTotalCell = document.getElementById('cartTotal');
-				const cartFull = document.getElementById('getFull')
-				cartItems.forEach((item,j)=>{
-					let itemQuantity = parseInt(document.getElementById(`quantityInput${j}`).value);
-					const itemPrice = parseInt(item.ProductId.Price);
-					if (isNaN(itemQuantity) ) {
-						itemQuantity=1;
-					}
-						cartTotal += itemQuantity * itemPrice;
-				});
-				console.log(cartTotal,' this is carttotal');
-				cartTotalCell.textContent=cartTotal;
-				cartFull.textContent=cartTotal;
-				console.log('cart updated');
+		
+			function validateQuantity(input) {
+				let value = parseInt(input.value);
+				let min = parseInt(input.min);
+				let max = parseInt(input.max);
 
-		}
+				if (value < min) {
+					input.value = min; 
+				} else if (value > max) {
+					input.value = max; 
+				}
+			}
 
-		console.log(cartItems);
-			cartItems.forEach((cartItem,i)=>{
-				const quantityInput= document.getElementById(`quantityInput${i}`);
-				const total = document.getElementById(`total${i}`);
+			function updateCart(event) {
+				const itemQuantity = event.target;
+				const j = parseInt(itemQuantity.getAttribute('data-index'));
+				console.log('    ',j);
+				const productId = itemQuantity.getAttribute('data-product-id');
+				const userId = document.querySelector('.table-body-row').getAttribute('value');
+				console.log(userId);
+				const quantity = parseInt(itemQuantity.value) || 1;
+				const rowIndex = itemQuantity.getAttribute('data-index');
+				console.log(quantity, ' dgsdgsd ', productId);
 
-				quantityInput.addEventListener('change',()=>{
-					const enteredQauntity = parseInt(quantityInput.value);
-					const Price = parseInt(cartItem.ProductId.Price);
-					const TotalPrice = parseInt(enteredQauntity*Price);
-					total.textContent=TotalPrice;
-					updateCart();
-				});
+				fetch('/updateCart', {
+					method: 'POST',
+					headers: {
+					'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+					quantity,
+					userId,
+					productId
+					})
+				}).then(result=>result.json())
+				 .then(response => {
+						if (response) {
+							console.log('Cart item updated successfully');
+							let allTotal = 0;
+							const cartItems = response;
+							console.log(response)
+							cartItems.forEach((item,i) => {
+							allTotal += item.Total
+							const totalPrice =item.Total;
+							const totalFields = document.getElementById('total'+i);
+							totalFields.textContent =totalPrice;
+							})
+							
+							const allTotalElement = document.getElementById('allTotal');
+							const GetTotalElement = document.getElementById('getFull');
+							GetTotalElement.textContent = allTotal;
+							allTotalElement.textContent = allTotal;
+							console.log(allTotal);
+							
+						} else {
+							throw new Error('Error updating cart item');
+						}
+					})
+					.catch(error => {
+						console.error('Error updating cart item:', error);
+					});
+			}
+
+		// 	const tableBody = document.getElementById('tablebody');
+		// 	const cartItems = JSON.parse(tableBody.getAttribute('data-cartitems'));
+		// 	console.log(cartItems);
+		// 	function updateProductTotal(cartItems){
+		// 		cartItems.forEach((cartItem,i)=>{
+		// 		const quantityInput= document.getElementById(`quantityInput${i}`);
+		// 		const total = document.getElementById(`total${i}`);
+
+		// 		quantityInput.addEventListener('change',()=>{
+		// 			const enteredQauntity = parseInt(quantityInput.value);
+		// 			const Price = parseInt(cartItem.ProductId.Price);
+		// 			const TotalPrice = parseInt(enteredQauntity*Price);
+		// 			total.textContent=TotalPrice;
+		// 			// updateCart();
+		// 		});
 				
-			})
-			updateCart();
+		// 	})
+		// 	// updateCart();
+		// 	}
+		// updateProductTotal(cartItems);
 
 		function deleteCart(user,cartId,productId){
 			console.log(user ,' + ',cartId,' =' ,productId);
@@ -269,19 +331,24 @@
 				body: JSON.stringify({ id: user ,cartId:cartId,productId:productId})
 			})
 			.then(response=>response.json())
-			.then(cartItems=>{
+			.then(result=>{
 				const table = document.getElementById('tablebody');
 				table.innerHTML ='';
+				const cartItems = result.cartItems
+				let allTotal =result.allTotal;
 				cartItems.forEach((cartItem,i) => {
+					
 					const row = document.createElement('tr');
 					row.className ='table-body-row'
+					row.setAttribute('value', cartItem.UserId);
+
 
 					const removeCart = document.createElement('td');
 					removeCart.className = 'product-remove';
-					removeCart.onclick = ()=>deleteCart(user, cartItem._id, cartItem.ProductId._id);
+					removeCart.onclick = ()=>deleteCart(cartItem.UserId, cartItem._id, cartItem.ProductId._id);
 					removeCart.innerHTML = '<i class="far fa-window-close"></i>';
 					row.appendChild(removeCart);
-
+					
 					
 					const imageCell = document.createElement('td');
 					imageCell.className = 'product-image';
@@ -299,30 +366,86 @@
 					const priceCell = document.createElement('td');
 					priceCell.className = 'product-price';
 					priceCell.textContent = cartItem.ProductId.Price;
+					console.log(priceCell.textContent,'thisdnfsdfs');
 					row.appendChild(priceCell);
 					
 					const quantity =document.createElement('td');
 					quantity.className = 'product-quantity';
 					const quantityInput = document.createElement('input');
         			quantityInput.type = 'number';
+					quantityInput.className =
+					quantityInput.max = cartItem.ProductId.Quantity;
+					quantityInput.min = 1;
 					quantityInput.placeholder = cartItem.Quantity;
-					quantity.addEventListener('change',()=>{
-						updateCart()
+					quantityInput.setAttribute('data-index', i)
+					quantityInput.setAttribute('data-product-id', cartItem.ProductId._id);
+					let totaField=priceCell.textContent;
+					let total = document.createElement('td');
+					quantityInput.addEventListener('change',(event)=>{
+
+						total.className='product-total';
+						total.id ='total'+i
+						console.log(totaField);
+						row.appendChild(total);
+						updateCart(event);
 					})
 					quantity.appendChild(quantityInput);
-					row.appendChild(quantity);
+					row.appendChild(quantity)
+					
+					let allTotal = 0;
+					const totalFields = document.getElementsByClassName('product-total');
+					console.log(totalFields.length,'this si toatl field',totalFields);
+					for (let i = 0; i < totalFields.length; i++) {
+						const totalValue = parseInt(totalFields[i].textContent);
+						if (!isNaN(totalValue)) {
+							allTotal += totalValue;
+						}
+					}
+					console.log(allTotal);
+					
 
-					const total = document.createElement('td');
+					const allTotalElement = document.getElementById('allTotal');
+					const GetTotalElement = document.getElementById('getFull');
+					allTotalElement.textContent = 'Rs. ' + allTotal;
+					GetTotalElement.textContent = 'Rs. ' + allTotal;
+
 					total.className='product-total';
 					total.id =`total$(i)`
-					total.textContent = '1';
+					console.log(totaField);
+					total.textContent = cartItem.Total;
 					row.appendChild(total);
-
-					table.appendChild(row)
+					table.appendChild(row);
+					allTotal += cartItem.Total;
 				});
-				updateCart()
+					const quantityInputs = document.getElementsByClassName('product-quantity-input');
+					for (let i = 0; i < quantityInputs.length; i++) {
+					quantityInputs[i].setAttribute('data-index', i);
+					}
+					const allTotalElement = document.getElementById('allTotal');
+					const GetTotalElement = document.getElementById('getFull');
+					allTotalElement.textContent = 'Rs. ' + allTotal;
+					GetTotalElement.textContent = 'Rs. ' + allTotal;
+			})
+			.catch((error)=>{
+				console.log('fetching delete error ',error);
 			})
 		};
+
 	</script>
 
 <%- include('../layouts/footer.ejs') %>
+<!-- <tbody id="totaTable">
+	<tr class="total-data">
+		<td><strong>Subtotal: </strong></td>
+		<td id="cartTotal">Rs.<%= Total %></td>
+	</tr>
+	<tr class="total-data">
+		<td><strong>Shipping: </strong></td>
+		<td>Free Shipping</td>
+	</tr>
+	<tr class="total-data">
+		<td><strong>Total: </strong></td>
+		<td id="getFull">Rs.<%= Total %></td>
+	</tr>
+</tbody>
+</table> -->

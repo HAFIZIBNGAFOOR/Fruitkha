@@ -32,18 +32,38 @@
 				 
 
 				<div class="col-md-5">
-					<div class="single-product-img">
-						<img src="images/<%= singleProduct.ProductImage[1] %>" alt="">
+					<div class="single-product-img" value="<%= singleProduct %>">
+						<div id="carouselExample" class="carousel slide" data-ride="carousel">
+							<div class="carousel-inner">
+							  <div class="carousel-item active">
+								<img src="images/<%= singleProduct.ProductImage[0] %>" class="d-block w-100" alt="Image 1">
+							  </div>
+							  <div class="carousel-item">
+								<img src="images/<%= singleProduct.ProductImage[1] %>" class="d-block w-100" alt="Image 2">
+							  </div>
+							  <div class="carousel-item">
+								<img src="images/<%= singleProduct.ProductImage[2] %>" class="d-block w-100" alt="Image 3">
+							  </div>
+							</div>
+							<a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
+							  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							  <span class="sr-only">Previous</span>
+							</a>
+							<a class="carousel-control-next" href="#carouselExample" role="button" data-slide="next">
+							  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+							  <span class="sr-only">Next</span>
+							</a>
+						  </div>
 					</div>
 				</div>
 				<div class="col-md-7">
 					<div class="single-product-content">
 						<h3><%= singleProduct.ProductName %></h3>
-						<p class="single-product-pricing"><span>Per Kg</span> Rs.<%= singleProduct.Price %> <span></span> </p>
+						<p class="single-product-pricing" value="<%= user %>"><span>Per Kg</span> Rs.<%= singleProduct.Price %> <span></span> </p>
 						<p><%= singleProduct.Description %></p>
 						<div class="single-product-form">
 							
-							<a href="" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+							<a data-product-id="<%= singleProduct._id %>" data-user-id="<%= user ? user._id : '' %>" onclick="addToCart(this)" class="cart-btn addToCart"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
 							<p><strong>Category : <%= singleProduct.Category.categoryName %> </strong></p>
 						</div>
 						<h4>Share:</h4>
@@ -83,7 +103,9 @@
 						</div>
 						<h3><%= AllProducts[i].ProductName%></h3>
 						<p class="product-price"><span>Per Kg</span> Rs. <%= AllProducts[i].Price  %> </p>
-						<a href="cart.html" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+						<a class="cart-btn addToCart" data-product-id="<%= AllProducts[i]._id %>" data-user-id="<%= user ? user._id : '' %>" onclick="addToCart(this)">
+							<i class="fas fa-shopping-cart"></i> Add to Cart
+						  </a>
 					</div>
 				</div>
 				<% } %>
@@ -212,5 +234,53 @@
 	<script src="/js/sticker.js"></script>
 	<!-- main js -->
 	<script src="/js/main.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<script>
+		function addToCart(element){
+			// const product = document.querySelector('.addToCart');
+			// const Ids = product.getAttribute('value');
+			//let array =Ids.split(',');
+			const ProductId= element.getAttribute('data-product-id')
+			const user =element.getAttribute('data-user-id');
+			console.log(ProductId,'dfgsdsd', user);
+			fetch('/add-to-cart', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id: ProductId, user: user })
+				})
+				.then(response => response.json())
+				.then(added => {
+					// const success = document.getElementById('Added');
+					// const error = document.getElementById('Failed');
+
+					if (added) {
+						Swal.fire({
+						title: " Item Added!",
+						text: "Product added to cart successfully!",
+						icon: "success",
+						buttonsStyling: false,
+						confirmButtonText: "OK",
+						customClass: {
+						confirmButton: "btn btn-primary"
+						}
+					});
+					} else {
+						Swal.fire({
+						title: "Failed!",
+						text: "Please Login/ SignUp To add to cart!",
+						icon: "error",
+						buttonsStyling: false,
+						confirmButtonText: "OK",
+						customClass: {
+						confirmButton: "btn btn-primary"
+						}
+					});
+					}
+				});
+		}
+	</script>
 
 	<%- include('../layouts/footer.ejs') %>

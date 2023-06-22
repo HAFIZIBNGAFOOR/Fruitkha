@@ -12,7 +12,7 @@
                       <div class="input-group-prepend bg-transparent">
                         <i class="input-group-text border-0 mdi mdi-magnify"></i>
                       </div>
-                      <input type="text" class="form-control bg-transparent " placeholder="Search User">
+                      <input type="text" id="searchUser" class="form-control bg-transparent " placeholder="Search User">
                     </div>
                    
                         <input type="submit" class="form-control bg-transparent border-0"   value="Search">
@@ -32,28 +32,35 @@
                             <th>Name</th>
                             <th>Mobile</th>
                             <th>Status</th>
+                            <th>Action</th>
+                            
                           </tr>
                         </thead>
                         <tbody>
                             <%if(userData.length>0)  { %>
+                              <% let serialNumber = (currentPage - 1) * pageSize + 1;  %>
                                 <%for(let i=0;i <userData.length; i++){ %>
                           <tr>
-                            <td><%= i+1 %></td>
+                            <td><%= serialNumber %></td>
                             <td><%= userData[i].email %></td>
-                            <td><%= userData[i].name %></td>
+                            <td><%= userData[i].fname %></td>
                             <td><%= userData[i].mobile %></td>
+                            <% if ( userData[i].blockStatus ===false) { %>
+                              <td>Active</td>
+                            <% }else{ %>
+                              <td>Blocked</td>
+                              <% } %>
+                            
                             <td>
                                 <% if(userData[i].blockStatus){  %>
-                                <!-- <label class="badge badge-success"> -->
                                     <a class="btn btn-success" data-bs-target="#unblockBut" data-bs-toggle="modal"  onclick="unblock('<%= userData[i]._id %>')" >Unblock</a>
-                                <!-- </label> -->
                                 <% }else{ %>
-                                <!-- <label class="badge badge-danger"> -->
                                     <a class="btn btn-danger" data-bs-target="#blockBut" data-bs-toggle="modal"  onclick="block('<%= userData[i]._id %>')">Block</a>
-                                <!-- </label> -->
+                                
                              <% } %>
                             </td>
                           </tr>
+                          <% serialNumber++ %>
                             <% } %>
                         <% }else{ %>
                             <tr>
@@ -63,7 +70,36 @@
                            <% } %>
                         </tbody>
                       </table>
+                      
                     </div>
+                    <div class="row">
+                      <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                          <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                              <a class="page-link" href="/admin/users?page=<%= parseInt(currentPage) - 1 %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                              </a>
+                            </li>
+                          <% } %>
+                          
+                          <% for (let i = startPage; i <= endPage; i++) { %>
+                            <li class="page-item"><a class="page-link" href="/admin/users?page=<%= i %>"><%= i %></a></li>
+                          <% } %>
+                          
+                          <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                              <a class="page-link" href="/admin/users?page=<%= parseInt(currentPage) + 1 %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                            </li>
+                          <% } %>
+                          
+                          
+                          
+                        </ul>
+                      </nav>
+                      </div>
                   </div>
                 </div>
           </div>

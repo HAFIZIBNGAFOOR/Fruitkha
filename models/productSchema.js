@@ -18,6 +18,10 @@ const ProductData=new mongoose.Schema({
         type:Number,
         required:true
     },
+    DiscountedPrice:{
+        type:Number,
+        default:0,
+    },
     Description:{
         type:String,
     },
@@ -25,7 +29,11 @@ const ProductData=new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required:true
-    }
+    },
+    timestampField: {
+        type: Date,
+        default: Date.now
+      }
 });
 ProductData.plugin(mongoosePaginate);
 const Product=mongoose.model("Product",ProductData);

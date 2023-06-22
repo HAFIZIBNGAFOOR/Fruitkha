@@ -1,0 +1,111 @@
+<%- include('../layouts/adminHeader.ejs') %>
+<style>
+  .no-underline {
+  text-decoration: none;
+}
+.btn-maximize {
+  display: flex;
+  flex-grow: 1;
+}
+
+/* .card-body {
+  display: inline-block; 
+  width: fit-content;
+ }  */
+/* .content-wrapper {
+  display: inline-block;x
+  overflow-x: auto;
+} */
+</style>
+<div class="main-panel ">
+<div class="content-wrapper" > 
+
+<div class="flex" style="border-style:ridge; border-color:rgb(7, 4, 0); ">
+    <div class="card" >
+      <div class="card-body" >
+
+        <h4 class="p-5 card-title">Orders Of FRUITKHA</h4>
+        <!-- <a type="button" href="/admin/viewOrders" class="btn  btn-gradient-success btn-fw">Edit</a>
+        <p></p> -->
+        <%  
+        if(typeof message !=='undefined'){
+          %>
+              <p style="color:green;"><%= message %></p>        
+          <%
+       }
+       %>
+        <!-- <p class="card-description"> This are the Orders of Fruitkha <code></code>
+        </p> -->
+        <div class="table-responsive">
+          <!-- <div style="overflow-x: auto;"> -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th> Order Id </th>
+              <th> Date </th>
+              <th> Total Price </th>
+              <!-- <th> Payment Method </th> -->
+              <th> Order Status </th>
+              <th> Change Status </th>
+              <th> Cancel Order </th>
+              <th> View Order </th>
+              
+
+            </tr>
+          </thead>
+          <tbody>
+              <% if (Orders.length>0) { %>
+                <% for( let i = 0; i < Orders.length; i++ ) { %>
+              <tr> 
+                <td> <%= Orders[i].orderId %> </td>
+              <!-- <td class="py-1"> -->
+                <td> <%= Orders[i].date.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) %> </td>
+              <!-- </td> -->
+
+              <td><%= Orders[i].total %></td>  
+              <td ><span   class=" text-black btn-maximize"><%= Orders[i].status %></span></td>
+              <td>    
+                <% if (Orders[i].status === "processing") { %>
+                  <a href="/admin/change-status?id=<%= Orders[i]._id %>"
+                       class="btn-sm btn-info  no-underline btn-maximize"
+                       onclick="return confirm('Are you sure?')">Ship Order</a>
+                  <% } %>
+            
+                  <% if (Orders[i].status === "Shipped") { %>
+                    <a href="/admin/change-status?id=<%= Orders[i]._id %>"
+                         class="btn-sm btn-warning  no-underline btn-maximize"
+                         onclick="return confirm('Are you sure?')">Out of delivery</a>
+                    <% } %>
+            
+                    <% if (Orders[i].status === "Out for Delivery") { %>
+                      <a href="/admin/change-status?id=<%= Orders[i]._id %>"
+                           class="btn-sm btn-secondary  no-underline btn-maximize"
+                           onclick="return confirm('Are you sure?')">Delivered</a>
+                      <% } %>
+                      <% if (Orders[i].status === "cancelled") { %>
+                        <span   class=" text-black btn-maximize"><%= Orders[i].status %></span>
+                        <% } %>
+                </td>
+                <% if (Orders[i].status !== 'cancelled') { %>
+                  <td><a href="/admin/cancel-order?id=<%= Orders[i]._id %>"  class="btn btn-danger btn btn-sm">Cancel Order</a></td>
+                <% }else{ %>
+                  <td ><span   class=" text-black btn-maximize"><%= Orders[i].status %></span></td>
+                  <% } %>
+                <td><a href="/admin/order-details?id=<%= Orders[i]._id %>"  class="btn btn-success btn btn-sm">View</a></td>
+            </tr>
+                <% } %>
+              <% }else{ %>
+                <tr>
+                  <td colspan="5"> No Orders found</td>
+              </tr>
+             <% } %>
+          </tbody>
+        </table>
+        <!-- </div> -->
+      </div>
+      </div>
+      </div>
+      </div>
+      </div> 
+      </div>
+      <%- include('../layouts/adminFooter.ejs') %>

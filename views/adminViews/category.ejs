@@ -7,7 +7,7 @@
         <h4 class="card-title">Categories</h4>
         <p class="card-description">  <code></code>
         </p>
-        <a type="button" href="/admin/category/add" class="btn btn-outline-success btn-fw">Add new Category</a>
+        <a type="button" href="/admin/addCategory" class="btn btn-outline-success btn-fw">Add new Category</a>
         <p></p>
          <%  
 				if(typeof message !=='undefined'){
@@ -55,15 +55,10 @@
   </div>
   </div>
   </div>
-<%- include('../layouts/adminFooter.ejs') %>
 <script>
 function openDeleteModal(idOfProduct) {
-  // Set the value of the hidden input field
   document.getElementById('deleteID').value = idOfProduct;
   
-  // Open the modal
-  // const modal = new bootstrap.Modal(document.getElementById('unblockBut'));
-  // modal.show();
 }
 function deleteCategory() {
     const url = '/admin/deleteCategory'; 

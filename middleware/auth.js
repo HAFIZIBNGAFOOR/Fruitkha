@@ -2,7 +2,7 @@ const userlogin= (req,res,next)=>{
     if(req.session.user){
         next()
     }else{
-        res.redirect('/login')
+        res.redirect('/')
     }
 }
 const userLogout= (req,res,next)=>{
@@ -11,7 +11,7 @@ const userLogout= (req,res,next)=>{
         req.session.destroy();
         console.log('session destroyed');
         userData=undefined
-        res.redirect('/');
+        res.redirect('/login');
     }else{
         next();
     }

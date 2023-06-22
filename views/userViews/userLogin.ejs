@@ -166,8 +166,9 @@ a{
 					</label>
 				  </div>
 				<div class="mb-3">
-					<p id="emailError" style="color: red;"></p>
-				  <input type="text"  id="email" class="form-control emailId"  aria-describedby="emailHelp" name="email" placeholder="Email">
+					
+				  <input type="text"  id="email" class="form-control emailId"   aria-describedby="emailHelp" name="email" placeholder="Email">
+				  <p id="emailError" style="color: red;"></p>
 				</div>				  
 				  <div id="otpContainer" class="d-none">
 					<button type="button" id="sendOTP" class="btn btn-outline-primary btn-sm mb-2">Send OTP</button>
@@ -175,15 +176,15 @@ a{
 					<p id="errorOTP" class="d-none text-danger">User is blocked By Admin </p>
 					<p id="noMailOTP" class="d-none text-danger">Entered Email not exists </p>
 
-					 <input type="" id="otp" name="otp" value="" class="form-control mb-3" placeholder="OTP" required>
+					 <input type="" id="otp" name="otp" value=""  class="form-control mb-3" placeholder="OTP" required>
 				  </div>
 				  <div id="passwordContainer" class="d-none">
-					<input type="password" id="password" name="password" value="" class="form-control mb-3" placeholder="Password" required>
+					<input type="password" id="password" name="password"  class="form-control mb-3" placeholder="Password" required>
 					<!-- <button id="loginButton"  class="btn btn-color px-5 mb-3 w-100 text-white" type="submit">Login</button> -->
 				  </div>
 
 				  <p style="color: red;" id="submitError"></p>
-					<button type="submit" id="continueButton" class="btn btn-color px-5 mb-5 w-100 text-white">Login</button>
+					<button type="submit" id="continueButton"  class="btn btn-color px-5 mb-5 w-100 text-white">Login</button>
 				<!-- <div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100">Continue</button></div> -->
 				<div id="emailHelp" class="form-text text-center mb-5 text-dark">Not
 				  Registered? <a href="/signup" class="text "> Create an
@@ -249,7 +250,8 @@ a{
 			let email=document.getElementById('email').value
 			let emailError=document.getElementById('emailError')
 			let regex=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-			if(!regex.test(email)){
+			console.log('entered to validate funct');
+			if(!regex.test(email) ||email===''){
 				emailError.textContent='Enter a valid Email';
 				return false
 			}else{
@@ -299,25 +301,26 @@ a{
 
 		});
 		submitButton.addEventListener('click',function(event){
+			
 			event.preventDefault();
 			const emailValue=email.value.trim();
 			const otp =otpInput.value.trim();
 			const password= passwordInput.value.trim();
 
-			// otpInput=otp;
-			// passwordInput.value = password;
-			if (otp.length >3 || password.length > 4) {
-				submitButton.closest('form').submit();
-				submitError.textContent='';
-			}else{
-				const submitError=document.getElementById('submitError')
-				submitError.textContent='Enter Valid OTP Or Password '
+			
+				if (validate()) {
+					if (otp.length >3 || password.length > 4) {
+					submitButton.closest('form').submit();
+					submitError.textContent='';
+				}else{
+					const submitError=document.getElementById('submitError')
+					submitError.textContent='Enter Valid OTP Or Password '
+				}
 			}
 			
+			
 		})
-		// loginButton.addEventListener('click', function() {
-		// submitButton.style.display = 'block';
-		// });
+		
 		sendOTP.addEventListener('click',function(){
 			const email = document.querySelector('.emailId').value
 			const emailError=document.getElementById('emailError')

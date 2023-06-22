@@ -1,6 +1,8 @@
 <%- include('../layouts/adminHeader.ejs') %>
 <div class="main-panel">
 <div class="content-wrapper">
+  <a type="button"  href="/admin/product" class="btn btn-outline-info btn-icon-text">
+    <i class="fas fa-arrow-left"></i> Go Back To Products </a>
     <div class="col-lg-10 grid-margin ">
     <div class="card">
       <div class="card-body">
@@ -13,10 +15,18 @@
             <%
          }
          %>
+         <%  
+         if(typeof errormessage !=='undefined'){
+             %>
+                 <p style="color:red;"><%= errormessage %></p>        
+             <%
+          }
+          %>
         <form class="forms-sample" onsubmit="return validate()" enctype="multipart/form-data"  method="post">
           <div class="form-group">
             <label for="exampleInputName1">Product Name</label>
             <input type="text" name="ProductName" class="form-control" id="name" placeholder="Name">
+            <p style="color: red;" id="nameerror"></p>
           </div>
           <div class="form-group">
             <label  for="exampleFormControlSelect1">Product Category</label>
@@ -27,21 +37,27 @@
               <% } %>
               <% } %>
             </select>
+            <p style="color: red;" id="categoryerror"></p>
           </div>
           <div class="form-group">
             <label for="exampleInputName1">Product Quantity</label>
-            <input type="text" name="Quantity" class="form-control" id="qauntity" placeholder="Quantity">
+            <input type="text" name="Quantity" class="form-control" oninput="validateNumericInput(event,'quantityNumberError')" id="quantity" placeholder="Quantity">
+            <p style="color: red;" id="quantityNumberError"></p>
+            <p style="color: red;" id="quantityerror"></p>
           </div>
           <div class="form-group">
             <label for="exampleInputPassword4">Price of the Product </label>
-            <input type="text" name="Price" class="form-control" id="price" placeholder="Price">
+            <input type="text" name="Price" class="form-control" oninput="validateNumericInput(event,'priceNumberError')" id="price" placeholder="Price">
+            <p style="color: red;" id="priceerror"></p>
+            <p style="color: red;" id="priceNumberError"></p>
           </div>
           <div class="form-group">
             <label>Product Image</label>
             <input type="file" name="img[]" class="file-upload-default">
             <div class="input-group col-xs-12">
                 <div class="form-group">
-                    <input type="file" id="image"  name="images" accept="image/*" multiple class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image">
+                    <input type="file" id="image"  name="images" accept="image/*" multiple class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image" >
+                    <p style="color: red;" id="imageerror"></p>
                   </div>
             </div>
           </div>
@@ -88,19 +104,136 @@
 function validate() {
   let name = document.getElementById('name').value;
   let category = document.getElementById('category').value;
-  let quantity = document.getElementById('qauntity').value;
+  let quantity = document.getElementById('quantity').value;
   let price = document.getElementById('price').value;
-  let error = document.getElementById('errorbox');
+  let priceIsNan = price.trim();
+  let fileInput = document.getElementById('image');
+  let files = fileInput.files;
+  let numberRegex = /^\d+$/;
+  let categorySelect = document.getElementById('category');
+  let selectedCategory = categorySelect.selectedIndex;
+  let categoryError = document.getElementById('categoryerror');
 
-  if (!name || name.length < 4 || !category || quantity < 0 || price < 0) {
-    error.textContent = 'Please Enter valid details';
+  if (!name || name.length<3) {
+    document.getElementById('nameerror').textContent = 'Please Enter valid a valid Name';
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('categoryerror').textContent = ''
+    document.getElementById('quantityerror').textContent = ''
+    document.getElementById('imageerror').textContent = ''
     return false;
+  }else if (!selectedCategory) {
+    categoryError.textContent = 'Please select a category.';
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('quantityerror').textContent = ''
+    document.getElementById('imageerror').textContent = ''
+    return false;
+  }else if(quantity < 1){
+    console.log('quantity checked');
+    document.getElementById('quantityerror').textContent = 'please enter a valid quantity'
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('categoryerror').textContent = ''
+    document.getElementById('imageerror').textContent = ''
+    return false
+  }else if (files.length < 3){
+    console.log('image checked');
+    document.getElementById('imageerror').textContent = 'please select atleast 3 images'
+    document.getElementById('categoryerror').textContent = ''
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('quantityerror').textContent = '';
+    return false
+  }
+  else if( price <1 ){
+    console.log('price checkked');
+    document.getElementById('priceerror').textContent = 'please enter a valid Price'
+    document.getElementById('quantityerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('categoryerror').textContent = ''
+    document.getElementById('imageerror').textContent = ''
+    return false
+  }else{
+    console.log('trruuuuueeeeee');
+    document.getElementById('categoryerror').textContent = ''
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('quantityerror').textContent = ''
+    document.getElementById('imageerror').textContent = ''
+    return true
+  }
+}
+function validateNumericInput(event,eventId) {
+  let input = event.target;
+  let value = input.value.trim();
+  let numericValue = value.replace(/\D/g, '');
+  input.value = numericValue;
+  if (numericValue === '') {
+    document.getElementById(eventId).textContent = 'Please enter a number.';
+  } else {
+    document.getElementById(eventId).textContent = '';
+  }
+}
+// Assuming you have included Cropper.js library
+
+document.getElementById('myForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent the default form submission
+
+  let fileInput = document.getElementById('image');
+  let files = fileInput.files;
+
+  // Check if any image files are selected
+  if (files.length === 0) {
+    // Handle the case where no image files are selected
+    return;
   }
 
-  // Perform additional validations here
+  // Create an array to store the cropped image Blobs
+  let croppedImages = [];
 
-  return true;
-}
+  // Iterate over each selected file
+  for (let i = 0; i < files.length; i++) {
+    let file = files[i];
+
+    // Create a FileReader for each file
+    let reader = new FileReader();
+
+    // Set up the FileReader onload event
+    reader.onload = function(e) {
+      // Create an image element
+      let imageElement = document.createElement('img');
+      imageElement.src = e.target.result;
+
+      // Initialize the Cropper.js instance on the image
+      let cropper = new Cropper(imageElement, {
+        // Configure cropping options as needed
+        aspectRatio: 1, // Example aspect ratio
+        // Additional Cropper.js options...
+      });
+
+      let croppedCanvas = cropper.getCroppedCanvas();
+      croppedCanvas.toBlob(function(blob) {
+        // Add the cropped image Blob to the array
+        croppedImages.push(blob);
+
+        // Check if all files have been processed
+        if (croppedImages.length === files.length) {
+          // Create a new FormData object
+          let formData = new FormData();
+          for (let j = 0; j < croppedImages.length; j++) {
+            formData.append('croppedImages', croppedImages[j], 'cropped_image_' + j + '.jpg');
+          }
+          event.target.formData = formData;
+          event.target.submit();
+        }
+        console.log('image cropped',formData);
+      }, 'image/jpeg'); // Specify the desired image format
+    };
+
+    // Read the current file as a data URL
+    reader.readAsDataURL(file);
+  }
+});
 
 
 </script>

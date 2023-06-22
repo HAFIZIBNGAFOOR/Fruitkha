@@ -1,0 +1,67 @@
+<%- include('../layouts/adminHeader.ejs') %>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <a type="button"  href="/admin/dashboard" class="btn btn-outline-info btn-icon-text mb-5">
+        <i class="fas fa-arrow-left"></i> Go To DashBoard </a>
+    </div>
+      <div class="col-lg-12 grid-margin justify-content-center align-items-center mt-5">
+        <!-- <div class="daily-"> -->
+            <h2 style="color: purple;">Daily Sales Report</h2>
+            <div class="report-details">
+              <div class="report-section">
+                <p><span>Date:</span>
+                <span><%= formattedDate.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) %></span></p>
+              </div>
+              <div class="report-section">
+                <h3>Total Sales:</h3>
+                <p>Rs.<%= totalSales %></p>
+              </div>
+              <div class="report-section">
+                <h3>Number of Orders:</h3>
+                <p><%= numOrders %></p>
+              </div>
+              <!-- <div class="report-section">
+                <h3>Average Order Value:</h3>
+                <p>Rs. </p>
+              </div> -->
+            </div>
+      <!-- </div> -->
+      </div>
+    <!-- <div class="top-selling-products"> -->
+      <div class="col-lg-12  stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Top Selling Products:</h3>
+            <p class="card-description">
+            </p>
+            <table class="table table-dark">
+              <thead>
+                <tr>
+                  <th> # </th>
+                  <th> Product Name </th>
+                  <th>Quantity Sold </th>
+                  <th> Total Revenue </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% topProducts.forEach((product, index) => { %>
+                    <tr>
+                      <td><%= index + 1 %></td>
+                      <td><%= product.productName %></td>
+                      <td><%= product.totalQuantity %></td>
+                      <td>Rs.<%= product.totalRevenue %></td>
+                    </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- </div> -->
+  
+<%- include('../layouts/adminFooter.ejs') %>

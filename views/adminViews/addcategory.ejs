@@ -1,11 +1,17 @@
 <%- include('../layouts/adminHeader.ejs') %>
      
         <div class="body column-lg-10 m-5 p-5 auth ">
+          <a type="button"  href="/admin/category" class="btn btn-outline-info btn-icon-text">
+            <i class="fas fa-arrow-left"></i> Go Back To Category </a>
           <div class="row flex-grow">
             <div class=" mx-auto">
               <div class="auth-form-light text-left p-5">
-                <div class="brand-logo">
+                <!-- <div class="brand-logo">
                   <img src="/assets/images/logo.svg">
+                </div> -->
+                <div>
+                  <h4>Category</h4> 
+                  <h6 class="font-weight-light">Add new Categories</h6>
                 </div>
                 <%  
 				if(typeof message !=='undefined'){
@@ -17,13 +23,15 @@
 				}
 				
 				%>
-                <form class="form-outline mb-4" id="form"  enctype="multipart/form-data" action="/admin/category/add" method="post">
-                <h4>Category</h4> 
-                <h6 class="font-weight-light">Add new Categories</h6>
+                <form class="form-outline mb-4" id="form"  enctype="multipart/form-data" action="/admin/addCategory" method="post">
+               
                 <form class="pt-3">
                   <p id="nameError" style="color: red;"></p>
                   <div class="form-group">
                     <input type="text" name="categoryName" id="categoryName" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Category Name">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" name="discount" id="discount" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Discount % (if any)">
                   </div>
                    <div class="form-group">
                     <input type="file" id="image"   name="file" accept="image/*" class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image">

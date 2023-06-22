@@ -1,10 +1,32 @@
 <%- include('../layouts/adminHeader.ejs') %>
+<style>
+   .image-thumbnails {
+    display: flex;
+    align-items: center;
+  }
+
+  .image-thumbnails img {
+    width: 5rem;
+    height: 5rem;
+    object-fit: cover;
+    /* border-radius: 50%; */
+    margin-right: 5px;
+    cursor: pointer;
+  }
+
+  /* Hide the file input by default */
+  .image-upload input[type="file"] {
+    display: none;
+  }
+</style>
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="col-lg-10 grid-margin ">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Edit Product</h4>
+            <a type="button"  href="/admin/product" class="btn btn-outline-info btn-icon-text">
+              <i class="fas fa-arrow-left"></i> Go Back To Products </a>
+            <h4 class="card-title pt-4">Edit Product</h4>
             <p class="card-description"> Edit the Product details </p>
             <%  
             if(typeof message !=='undefined'){
@@ -13,21 +35,24 @@
                 <%
              }
              %>
-            <form class="forms-sample" action="/admin/editProduct?id=<%= ProductData._id %>" onsubmit="return validate()" enctype="multipart/form-data"  method="post">
+            <form class="forms-sample" id="editForm" action="/admin/editProduct?id=<%= ProductData._id %>"   enctype="multipart/form-data" method="post" >
               <div class="form-group">
                 <label for="exampleInputName1">Product Name</label>
                 <input type="text" name="ProductName" class="form-control" value="<%= ProductData.ProductName %>" id="name" placeholder="Name">
               </div>
               <div class="form-group">
                 <label name="Category" for="exampleFormControlSelect1">Product Category</label>
-                <select class="form-control form-control" value="<%= ProductData.Category %>" name="Category" id="category">
-                    <% for( let i = 0; i < Category.length; i++ ) { %>
-                    
-                  <option value="<%= Category[i]._id %>"><%= Category[i].categoryName %></option>
+                <select class="form-control form-control" name="Category" id="category">
+                  <% for (let i = 0; i < Category.length; i++) { %>
+                    <% if (Category[i]._id.toString() === ProductData.Category.toString()) { %>
+                      <option value="<%= Category[i]._id %>" selected><%= Category[i].categoryName %></option>
+                    <% } else { %>
+                      <option value="<%= Category[i]._id %>"><%= Category[i].categoryName %></option>
+                    <% } %>
                   <% } %>
-
                 </select>
               </div>
+              
               <div class="form-group">
                 <label for="exampleInputName1">Product Quantity</label>
                 <input type="text" name="Quantity" class="form-control" value="<%= ProductData.Quantity %>" id="qauntity" placeholder="Quantity">
@@ -38,23 +63,61 @@
               </div>
               <div class="form-group">
                 <label>Product Image</label>
-                <input type="file" name="img[]" class="file-upload-default">
+                <!-- <input type="file" name="img[]" class="file-upload-default">
                 <div class="input-group col-xs-12">
-                    <div class="form-group">
-                        <input type="file" id="image" value="<%= ProductData.ProductImage %>"  name="images" accept="image/*" multiple class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image">
+                  <div class="form-group">
+                    <input type="file" id="image" name="images" accept="image/*" multiple class="form-control form-control-lg" id="exampleInputImage1" placeholder="Category Image">
+                  </div>
+                </div> -->
+              
+              
+                <!-- <div id="image-preview" class="mt-3 py-1 image-thumbnails">
+                  <% if (Images && Images.length > 0) { %>
+                    <% for (let i = 0; i < Math.min(3, Images.length); i++) { %>
+                      <div class="image-upload">
+                        <label for="image-upload-<%= i %>">
+                          <img src="/images/<%= Images[i] %>" alt="Image <%= i + 1 %>" onclick="editImage( '<%= i %>')" data-index="<%= i %>">
+                        </label>
+                        <input type="file" id="image-upload-<%= i %>" accept="image/*" onchange="uploadNewImage(event, '<%= i %>')" name="images" >
                       </div>
+                    <% } %>
+                  <% } %>
+                </div> -->
+                <div id="image-preview" class="mt-3 py-1 image-thumbnails">
+                  <% if ( Images.length > 0) { %>
+                    <% for (let i = 0; i < Math.min(3, Images.length); i++) { %>
+                      <div class="image-upload">
+                        <label for="image-upload-<%= i %>">
+                          <img src="/images/<%= Images[i] %>" alt="Image <%= i + 1 %>" onclick="editImage('<%= Images[i] %>', '<%= i %>')" data-index="<%= i %>">
+                        </label>
+                        <input type="hidden" id="image-upload-<%= i %>" accept="image/*" name="existingImages[]" value="/<%= Images[i] %>" >
+                      </div>
+                    <% } %>
+                  <% } else { %>
+                    <% for (let i = 0; i < 3; i++) { %>
+                      <div class="image-upload">
+                        <label for="image-upload-<%= i %>">
+                          <img src="" alt="Image <%= i + 1 %>" onclick="editImage('', '<%= i %>')" data-index="<%= i %>">
+                        </label>
+                        <input type="file" id="image-upload-<%= i %>" accept="image/*" onchange="uploadNewImage(event, '<%= i %>')" name="images" >
+                      </div>
+                    <% } %>
+                  <% } %>
                 </div>
-              </div>
+                
+                
+                
+                         
               <!-- <div class="form-group">
                 <label for="exampleInputCity1">Description </label>
                 <input type="text" class="form-control" id="exampleInputCity1" placeholder="Description">
               </div> -->
               <div class="form-group">
                 <label for="exampleTextarea1">Description</label>
-                <textarea class="form-control"  name="Description" id="exampleTextarea1" rows="4"><%= ProductData.Description %></textarea>
+                <textarea class="form-control"  name="Description" id="description" rows="3"><%= ProductData.Description %></textarea>
               </div>
               <p id="errorbox" class="error-message"></p>
-              <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+              <button type="submit" id="formEdit" class="btn btn-gradient-primary me-2">Submit</button>
               <button class="btn btn-light">Cancel</button>
             </form>
           </div>
@@ -77,4 +140,64 @@
     </div>
     <!-- page-body-wrapper ends -->
     </div>
+    <script>
+// function editImage(index) {
+//   var fileInput = document.getElementById(`image-upload-${index}`);
+//   if (fileInput.files && fileInput.files[0]) {
+//     var reader = new FileReader();
+
+//     reader.onload = function (e) {
+//       var imageElement = document.querySelector(`[data-index="${index}"]`);
+//       imageElement.src = e.target.result;
+//     };
+//     reader.readAsDataURL(fileInput.files[0]);
+//   }
+// }
+function editImage(imageName, index) {
+  var fileInput = document.getElementById(`image-upload-${index}`);
+  
+  // Check if a file is selected
+  if (fileInput.files && fileInput.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      // Find the image element with the corresponding index
+      var imageElement = document.querySelector(`[data-index="${index}"]`);
+      // Set the new image source
+      imageElement.src = e.target.result;
+
+      // Update the req.files object (assuming it is accessible in the current scope)
+      if (req.files && req.files[index]) {
+        req.files[index].path = fileInput.files[0].path;
+        req.files[index].originalname = fileInput.files[0].name;
+      }
+    };
+
+    reader.readAsDataURL(fileInput.files[0]);
+  }
+}
+
+function uploadNewImage(event, index) {
+  var file = event.target.files[0];
+
+  if (file) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      var imageElement = document.querySelector(`[data-index="${index}"]`);
+      imageElement.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+
+    // if (req.files && req.files[index]) {
+    //   req.files[index].path = file.path;
+    //   req.files[index].originalname = file.name;
+    // }
+  }
+}
+
+
+
+    </script>
     <%- include('../layouts/adminFooter.ejs') %>

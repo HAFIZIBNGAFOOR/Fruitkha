@@ -1,0 +1,171 @@
+<%- include('../layouts/header.ejs') %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<style>
+  .form-border {
+    border-color: #F28123;
+  }
+</style>
+
+<div class="breadcrumb-section breadcrumb-bg">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2  text-center">
+        <div class="breadcrumb-text">
+          <p>Fresh and Organic</p>
+          <h1>Address</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-4 col-md-4 offset-lg-2" style="justify-content: center;">
+<a type="button"  href="/Checkout" class="btn btn-outline-warning btn-icon-text">
+  <i class="mdi mdi-reload btn-icon-prepend"></i> Go Back To Checkout </a>
+</div>
+</div>
+<div class="checkout-section pt-150 pb-150">
+    <div class="container">
+     
+      <h4 style="color: #F28123; text-align: center;">Add new Address here</h4>
+      <hr>
+      <%  
+				if(typeof message !=='undefined'){
+					%>
+						<p style="color:red;"><%= message %></p>
+				
+					<%
+				
+				}
+				
+				%>
+        <div class="row">
+            <div class="col-lg-8 col-lg-8 offset-lg-2">
+                <div class="checkout-accordion-wrap">
+                     <div class="accordion" id="accordionExample">
+                      <div class="card single-accordion">
+                        <div class="card-header" id="headingOne">
+                          <h5 class="mb-0">
+                            <div class="btn " type="button"  aria-expanded="true" aria-controls="collapseOne">
+                              
+                            </div>
+                          </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> 
+                          <div class="card-body">
+                            <div class="billing-address-form">
+                                <form method="post" action="/checkout-addAddress">
+                                    <input type="hidden" name="userId" value="<%=user._id %>">
+                                    <p><input type="text" name="name" placeholder="Address Name"></p>
+                                    <p><input type="tel" name="number" placeholder="Number"></p>
+                                    <p><input type="text" name="house" placeholder="House"></p>
+                                    <p><input type="text" name="city" placeholder="City"></p>
+                                    <p><input type="text" name="state" placeholder="State"></p>
+                                    <p><input type="tel" name="pincode" placeholder="Pincode"></p>
+                                    <button style="color: #F28123;" type="submit" class="btn btn-md">Add Address</button>
+                                  </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>    
+            </div>
+        </div>        
+    </div> 
+    </div>   
+    <div class="footer-area">
+      <div class="container mt-5">
+        <div class="row mt-5">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-box about-widget">
+              <h2 class="widget-title">About us</h2>
+              <p>Ut enim ad minim veniam perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-box get-in-touch">
+              <h2 class="widget-title">Get in Touch</h2>
+              <ul>
+                <li>34/8, East Hukupara, Gifirtok, Sadan.</li>
+                <li>support@fruitkha.com</li>
+                <li>+00 111 222 3333</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-box pages">
+              <h2 class="widget-title">Pages</h2>
+              <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Shop</a></li>
+                <li><a href="news.html">News</a></li>
+                <li><a href="contact.html">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mt-5">
+            <div class="footer-box subscribe">
+              <h2 class="widget-title">Subscribe</h2>
+              <p>Subscribe to our mailing list to get the latest updates.</p>
+              <form action="index.html">
+                <input type="email" placeholder="Email">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end footer -->
+    
+    <!-- copyright -->
+    <div class="copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-12">
+            <p>Copyrights &copy; 2019 - <a href="https://imransdesign.com/">Imran Hossain</a>,  All Rights Reserved.<br>
+              Distributed By - <a href="https://themewagon.com/">Themewagon</a>
+            </p>
+          </div>
+          <div class="col-lg-6 text-right col-md-12">
+            <div class="social-icons">
+              <ul>
+                <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                <li><a href="#" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+                <li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end copyright -->
+  
+    <!-- jquery -->
+    <script src="/js/jquery-1.11.3.min.js"></script>
+    <!-- bootstrap -->
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- count down -->
+    <script src="/js/jquery.countdown.js"></script>
+    <!-- isotope -->
+    <script src="/js/jquery.isotope-3.0.6.min.js"></script>
+    <!-- waypoints -->
+    <script src="/js/waypoints.js"></script>
+    <!-- owl carousel -->
+    <script src="/js/owl.carousel.min.js"></script>
+    <!-- magnific popup -->
+    <script src="/js/jquery.magnific-popup.min.js"></script>
+    <!-- mean menu -->
+    <script src="/js/jquery.meanmenu.min.js"></script>
+    <!-- sticker js -->
+    <script src="/js/sticker.js"></script>
+    <!-- main js -->
+    <script src="/js/main.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<%- include('../layouts/footer.ejs') %>

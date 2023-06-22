@@ -1,4 +1,7 @@
 <%- include('../layouts/adminHeader.ejs') %>
+<style>
+ 
+</style>
 <div class="main-panel">
 <div class="content-wrapper">
 <div class="col-lg-10 grid-margin stretch-card">
@@ -15,11 +18,10 @@
           <%
        }
        %>
-        <p class="card-description"> This are the Products of Fruitkha <code></code>
-        </p>
         <table class="table table-striped">
           <thead>
             <tr>
+              <th> Seriel No</th>
               <th> Product Name </th>
               <th> Product Image </th>
               <th> Price </th>
@@ -30,8 +32,10 @@
           </thead>
           <tbody>
               <% if (Product.length>0) { %>
+                <% let serialNumber = (currentPage - 1) * pageSize + 1; %>
                 <% for( let i = 0; i < Product.length; i++ ) { %>
-              <tr> 
+              <tr>
+                <td> <%=serialNumber %> </td>
               <td> <%= Product[i].ProductName %> </td>
               <td class="py-1">
                 <img src="/images/<%=Product[i].ProductImage[1] %>" alt="image" />
@@ -47,6 +51,7 @@
                   <a href="#" type="button" data-bs-target="#unblockBut" data-bs-toggle="modal" onclick="openDeleteModal('<%= Product[i]._id %>')" class="btn btn-inverse-danger btn-rounded btn-sm">Delete</a>
                 </td>
             </tr>
+            <% serialNumber++ ; %>
                 <% } %>
               <% }else{ %>
                 <tr>
@@ -58,6 +63,34 @@
       </div>
       </div>
       </div>
+      <div class="row">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="/admin/product?page=<%= parseInt(currentPage) - 1 %>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            <% } %>
+            
+            <% for (let i = startPage; i <= endPage; i++) { %>
+              <li class="page-item"><a class="page-link" href="/admin/product?page=<%= i %>"><%= i %></a></li>
+            <% } %>
+            
+            <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="/admin/product?page=<%=parseInt(currentPage) + 1 %>" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            <% } %>
+            
+            
+            
+          </ul>
+        </nav>
+        </div>
       </div>
       </div>
       <script>

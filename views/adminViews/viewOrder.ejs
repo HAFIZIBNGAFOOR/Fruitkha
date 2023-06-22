@@ -1,0 +1,65 @@
+<%- include('../layouts/adminHeader.ejs') %>
+<div class="main-panel">
+<div class="content-wrapper">
+<div class="col-lg-10 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <a type="button"  href="/admin/dashboard" class="btn btn-outline-info btn-icon-text mb-5">
+            <i class="fas fa-arrow-left"></i> Go Back To Dashboard </a>
+       <div id="orderDetails">
+  
+        <h1>Order Details</h1>
+        <p><strong>Order ID:</strong> <b style="color: orangered;"><%= order.orderId %></b></p>
+        <p><strong>Date:</strong> <%= order.date.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) %></p>
+        <p><strong>Status:</strong> <%= order.status %></p>
+        <p><strong>Payment Method:</strong> <%= order.payment_method %></p>
+
+        <h4>Address</h4>
+
+          <p><strong>Address:</strong> <%=order.addressId %></p> 
+          <br>
+          <!-- <p><strong>Address:</strong> <%= order.addressId.house %>, <%= order.addressId.city %>,  <%= order.addressId.state %>, <%= order.addressId.pincode %></p> -->
+      </div>
+      <% var totalPrice = 0 %>
+      <% var totalquantity = 0 %>
+
+                        <% order.product.forEach(function(product) { %>
+                        <div class="card shadow-0 border mb-4">
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                <p class="text mb-0">Product name : <span class="text-primary text-nowrap" ><%= product.name %></span></p>
+                              </div>
+                              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                <p class="text mb-0 small">Price :<span class="text-success" > ₹<%= product.price * product.quantity %></span></p>
+                              </div>
+                              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                <p class="text mb-0 small">Quantity : <span class="text-danger" ><%= product.quantity %></span></p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <% totalquantity += product.quantity %>
+                        <% totalPrice += product.price * product.quantity %>
+                        <% }); %>
+                        <div class="card shadow-0  mb-4">
+                          <div class="card-body bg-light">
+                            <div class="row ">
+                              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                <p class="text mb-0">Total : <span class="text-primary text-nowrap" ></span></p>
+                              </div>
+                              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                <p class="text mb-0 small">Price :<span class="text-success" > ₹<%= totalPrice %></span></p>
+                              </div>
+                              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                <p class="text mb-0 small">Quantity : <span class="text-danger" ><%= totalquantity  %></span></p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+    
+</div>
+</div>
+</div>
+</div> 
+</div>
