@@ -92,7 +92,7 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-4">
                           <!-- <p class="lead fw-normal mb-0" style="color: #a8729a;">Order Summary</p> -->
-                          <p class="small text-muted mb-0">Order Address : <span class="text-secondary" > <%= order.addressId %></span></p>
+                          <p class="small text-muted mb-0">Shipping Address : <span class="text-secondary" > <%= order.addressId %></span></p>
                         </div>
                         
                         <% var totalPrice = 0 %>
@@ -104,7 +104,7 @@
                                 <p class="text-muted mb-0">Product name : <span class="text-primary text-nowrap" ><%= product.name %></span></p>
                               </div>
                               <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
-                                <p class="text-muted mb-0 small">Price :<span class="text-success" > ₹<%= product.price * product.quantity %></span></p>
+                                <p class="text-muted mb-0 small">Price :<span class="text-success" > Rs.<%= product.price * product.quantity %></span></p>
                               </div>
                               <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
                                 <p class="text-muted mb-0 small">Quantity : <span class="text-danger" ><%= product.quantity %></span></p>
@@ -119,13 +119,19 @@
                         <hr>
                         
                         <br>
-                        <div class="d-flex justify-content-between pt-2">
-                          <p class="fw-bold mb-0 text-success">Order Details</p>
-                          <p class=" text-success mb-0"><span class="fw-bold me-4 text-danger">Total Amount with discount : </span>Rs. <td><%= order.total ? order.total : order.subtotal %></td></p>
+                        <!-- <div class="d-flex justify-content-between pt-2">
+                          <p class=" mb-0 text-secondary"><center>Order Details</center> </p>
+                        </div> -->
+                        <div class=" pt-2 text-left">
+                          <% if (couponAmount) { %>
+                            <p class="  ml-5"><span class="fw-bold me-4 ">Coupon Discount : </span> <td>Rs.<%= couponAmount %></td></p>
+                          <% } %>
+                          <p class="  ml-5"><span class="fw-bold me-4 ">Total Amount with discount : </span>Rs. <td><%= order.total ? order.total : order.subtotal %></td></p>
+               
                         </div>
-                        <div class="d-flex justify-content-between pt-2">
+                        <div class="d-flex ">
                           <% if (order.status === "processing") { %>
-                            <h5 class="text-muted">Order status : Processing</h5>
+                            <h5 class="">Order status : Processing</h5>
                           <% } else if (order.status === "Shipped") { %>
                             <h5 class="text-warning">Order status : Shipped</h5>
                           <% } else if (order.status === "Out for Delivery") { %>
@@ -139,9 +145,9 @@
                           <% } %>
                         </div>
                         <br>
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex ">
                          
-                          <p class="text-success mb-0"><span class="text-danger">Ordered date : </span><%= order.date.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) %> <%= order.date.toLocaleTimeString('en-US', {hour: 'numeric', minute:'numeric'}) %></p>
+                          <p class="text-success mb-0"><span class="text-secondary">Ordered date : </span><%= order.date.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) %> <%= order.date.toLocaleTimeString('en-US', {hour: 'numeric', minute:'numeric'}) %></p>
                         </div>
                         <br>
                         
@@ -157,11 +163,11 @@
                               <% } %>
 
                               <% if (order.status === "Delivered") { %>
-                                <a href="/cancel-order?id=<%= order._id %>" class="text-danger btn btn-primary text-decoration-none"
+                                <a href="/return-order?id=<%= order._id %>" class="text-danger btn btn-primary text-decoration-none"
                                   data-bs-toggle="modal" data-bs-target="#exampleModal<%= order._id %>"><strong>Return order</strong></a>
                                   <% } %>
                                   <div class="pl-2">
-                                    <% if (order.status!=='cancelled') { %>
+                                    <% if (order.status!=='cancelled' && order.status!=='Returned') { %>
                                       <a class="text-succes btn btn-primary text-decoration-none" href="/trackOrder?id=<%= order._id %>"> Track Order</a>
                                     <% } %>
                                     
@@ -253,7 +259,7 @@
                                     </div>
                                     <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                      <a href="/cancel-order?id=<%= order._id %>"><button type="button" class="btn btn-danger">Return Order</button></a>
+                                      <a href="/return-order?id=<%= order._id %>"><button type="button" class="btn btn-danger">Return Order</button></a>
                                     </div>
                                   </div>
                                 </div>

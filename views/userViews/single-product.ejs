@@ -59,7 +59,15 @@
 				<div class="col-md-7">
 					<div class="single-product-content">
 						<h3><%= singleProduct.ProductName %></h3>
-						<p class="single-product-pricing" value="<%= user %>"><span>Per Kg</span> Rs.<%= singleProduct.Price %> <span></span> </p>
+						<p class="price">
+							<% if (singleProduct.DiscountedPrice > 0) { %>
+							  <del class="text-muted">Rs.<%= singleProduct.Price %></del><br>
+							  <span class="price-sale"><b>Rs.<%= singleProduct.DiscountedPrice %></b></span>
+							  <% } else { %>
+							  
+								  <span> <b><strong>Rs.<%= singleProduct.Price %></strong></b></span><br><br>
+							<% } %>
+						  </p>	
 						<p><%= singleProduct.Description %></p>
 						<div class="single-product-form">
 							
@@ -102,8 +110,16 @@
 							<a href="/single-product?id=<%= AllProducts[i]._id  %>"><img src="/images/<%= AllProducts[i].ProductImage[0] %>" alt=""></a>
 						</div>
 						<h3><%= AllProducts[i].ProductName%></h3>
-						<p class="product-price"><span>Per Kg</span> Rs. <%= AllProducts[i].Price  %> </p>
-						<a class="cart-btn addToCart" data-product-id="<%= AllProducts[i]._id %>" data-user-id="<%= user ? user._id : '' %>" onclick="addToCart(this)">
+						<p class="price">
+							<% if (AllProducts[i].DiscountedPrice > 0) { %>
+							  <del class="text-muted">Rs.<%= AllProducts[i].Price %></del><br>
+							  <span class="price-sale"><b>Rs.<%= AllProducts[i].DiscountedPrice %></b></span>
+							  <% } else { %>
+							  
+								  <span> <b><strong>Rs.<%= AllProducts[i].Price %></strong></b></span><br><br>
+							<% } %>
+						  </p>							
+						  <a class="cart-btn addToCart" data-product-id="<%= AllProducts[i]._id %>" data-user-id="<%= user ? user._id : '' %>" onclick="addToCart(this)">
 							<i class="fas fa-shopping-cart"></i> Add to Cart
 						  </a>
 					</div>

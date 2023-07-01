@@ -42,6 +42,23 @@
                         <% totalquantity += product.quantity %>
                         <% totalPrice += product.price * product.quantity %>
                         <% }); %>
+                        <% if (order.Coupon) { %>
+                          <div class="card shadow-0  mb-4">
+                            <div class="card-body bg-light">
+                              <div class="row ">
+                                <!-- <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text mb-0">Total : <span class="text-primary text-nowrap" ></span></p>
+                                </div> -->
+                                <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text mb-0 small">Coupon Discount :<span class="text-success" ></span></p>
+                                </div>
+                                <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text mb-0 small"> <span class="text-danger" > Rs.<%= order.Coupon.maxRedeemable  %></span></p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        <% } %>
                         <div class="card shadow-0  mb-4">
                           <div class="card-body bg-light">
                             <div class="row ">
@@ -49,10 +66,10 @@
                                 <p class="text mb-0">Total : <span class="text-primary text-nowrap" ></span></p>
                               </div>
                               <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
-                                <p class="text mb-0 small">Price :<span class="text-success" > ₹<%= totalPrice %></span></p>
+                                <p class="text mb-0 "> <b>Price :<span class="text-success" > ₹<%= order.total ? order.total : order.subtotal %></span></b></p>
                               </div>
                               <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
-                                <p class="text mb-0 small">Quantity : <span class="text-danger" ><%= totalquantity  %></span></p>
+                                <p class="text mb-0 "><b>Quantity : <span class="text-danger" ><%= totalquantity  %></span></b></p>
                               </div>
                             </div>
                           </div>

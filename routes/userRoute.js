@@ -1,7 +1,14 @@
 const express=require ('express');
 const userRoute=express();
 const bodyParser=require('body-parser');
-const userController= require('../controllers/userController');
+const adminController =require('../controllers/adminController');
+const userController = require('../controllers/userController')
+const productController = require('../controllers/productController')
+const cartController = require('../controllers/cartController')
+const bannerController = require('../controllers/bannerController')
+const categoryController = require('../controllers/categoryController')
+const couponController = require('../controllers/couponController')
+const orderController = require('../controllers/orderController')
 const morgan = require('morgan');
 const config=require('../config/config');
 const session= require('express-session');
@@ -23,25 +30,25 @@ userRoute.use(morgan('dev'));
 userRoute.get('/signup',userController.loadSignUp);
 userRoute.post('/signup',userController.sendOTP);
 userRoute.post('/otp',userController.verifyOTP);
-userRoute.get('/',userController.loadHome);
+userRoute.get('/',productController.loadHome);
 userRoute.get('/login',userController.loadLogin);
 userRoute.post('/login/otp',userController.verifyLogin);
 userRoute.post('/login',userController.verifyUser)
-userRoute.get('/shop',userController.loadShop);
-userRoute.get('/single-product',auth.userlogin,userController.singleProductLoad);
-userRoute.post('/add-to-cart',userController.addToCart);
-userRoute.get('/cart',auth.userlogin,userController.loadCart);
-userRoute.post('/delete-cartItem',userController.deleteCart)
+userRoute.get('/shop',productController.loadShop);
+userRoute.get('/single-product',auth.userlogin,productController.singleProductLoad);
+userRoute.post('/add-to-cart',cartController.addToCart);
+userRoute.get('/cart',auth.userlogin,cartController.loadCart);
+userRoute.post('/delete-cartItem',cartController.deleteCart)
 userRoute.get('/Checkout',auth.userlogin,userController.loadCheckout);
-userRoute.post('/Checkout',userController.placeOrder)
+userRoute.post('/Checkout',orderController.placeOrder)
 userRoute.get('/edit-checkOutAddress',userController.editCheckoutAddress)
 userRoute.post('/removeaddress-checkoutpage',userController.deleteCheckoutAddress);
 userRoute.get('/checkout-addAddress',userController.addCheckoutAddress);
 userRoute.post('/checkout-addAddress',userController.saveCheckoutAddress);
-userRoute.post('/validateCoupon',userController.coupon)
+userRoute.post('/validateCoupon',couponController.coupon)
+userRoute.get('/getBanner',bannerController.getBanner)
 
-
-userRoute.post('/updateCart',userController.updateCart);
+userRoute.post('/updateCart',cartController.updateCart);
 userRoute.get('/profile',auth.userlogin,userController.loadProfile);
 userRoute.post('/profile',userController.AddProfile);
 userRoute.get('/address',auth.userlogin,userController.loadAddress);
@@ -55,11 +62,12 @@ userRoute.get('/forget-password',  userController.forgetVerify);
 userRoute.post('/forget-password',  userController.resetPassword);
  
 userRoute.post('/deleteAddress',userController.deleteAddress)
-userRoute.get('/orders',auth.userlogin,userController.loadOrders)
-userRoute.get('/viewOrder',auth.userlogin,userController.viewOrders)
-userRoute.get('/cancel-order',auth.userlogin,userController.deleteOrder)
-userRoute.get('/orderSuccess',auth.userlogin,userController.orderSuccess);
-userRoute.get('/trackOrder',auth.userlogin,userController.trackOrder);
+userRoute.get('/orders',auth.userlogin,orderController.loadUserOrders)
+userRoute.get('/viewOrder',auth.userlogin,orderController.viewOrders)
+userRoute.get('/cancel-order',auth.userlogin,orderController.deleteOrder)
+userRoute.get('/return-order',auth.userlogin,orderController.returnOrder)
+userRoute.get('/orderSuccess',auth.userlogin,orderController.orderSuccess);
+userRoute.get('/trackOrder',auth.userlogin,orderController.trackOrder);
 
 userRoute.post('/create/orderId',(req,res)=>{
     try {

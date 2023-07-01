@@ -23,7 +23,9 @@
 							<% } %>
 								
 							<p class="subtitle p-5">Fresh & Organic</p>
-							<h1>Delicious Seasonal Fruits</h1>
+							<h1>Delicious Seasonal Fruits <br>
+								<span style="color: #F28123;" id="banner-caption"></span>
+							</h1>
 	
 						</div>
 					</div>
@@ -45,7 +47,7 @@
 						</div>
 						<div class="content">
 							<h3>Free Shipping</h3>
-							<p>When order over $75</p>
+							<p>Have Free Shipping for your Purchase</p>
 						</div>
 					</div>
 				</div>
@@ -101,8 +103,15 @@
 							<a href="/single-product?id=<%= Product[i]._id %>"><img src="images/<%= Product[i].ProductImage[0] %>" alt=""></a>
 						</div>
 						<h3><%= Product[i].ProductName %></h3>
-						<p class="product-price"><span>Per Kg</span> Rs. <%= Product[i].Price %> 
-					 </p>
+						<p class="price">
+							<% if (Product[i].DiscountedPrice > 0) { %>
+							  <del class="text-muted">Rs.<%= Product[i].Price %></del><br>
+							  <span class="price-sale"><b>Rs.<%= Product[i].DiscountedPrice %></b></span>
+							  <% } else { %>
+							  
+								  <span> <b><strong>Rs.<%= Product[i].Price %></strong></b></span><br><br>
+							<% } %>
+						  </p>	
 						<!-- <a href="" class="cart-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</a> -->
 					</div>
 				</div>
@@ -352,9 +361,9 @@
 					<div class="footer-box pages">
 						<h2 class="widget-title">Pages</h2>
 						<ul>
-							<li><a href="index.html">Home</a></li>
+							<li><a href="/">Home</a></li>
 							<li><a href="about.html">About</a></li>
-							<li><a href="services.html">Shop</a></li>
+							<li><a href="/shop">Shop</a></li>
 							<li><a href="news.html">News</a></li>
 							<li><a href="contact.html">Contact</a></li>
 						</ul>
@@ -420,4 +429,52 @@
 	<script src="/js/sticker.js"></script>
 	<!-- main js -->
 	<script src="/js/main.js"></script>
+	<script>
+document.addEventListener('DOMContentLoaded', function() {
+	var images = []; 
+	var captions = [];
+	var currentIndex = 0; 
+
+	function fetchBanners() {
+		fetch('/getBanner') 
+		.then(function(response) {
+			if (!response.ok) {
+			throw new Error('Error fetching banners');
+			}
+			return response.json();
+		})
+		.then(function(data) {
+			images = data.map(function(banner) {
+			return banner.imagePath; 
+			});
+			captions = data.map(function(banner) {
+			return banner.caption; 
+			});
+			updateBanner();
+		})
+		.catch(function(error) {
+			console.log('Error fetching banners:', error);
+		});
+	}
+
+	function updateBanner() {
+		var heroBg = document.querySelector('.hero-bg');
+		var bannerCaption = document.getElementById('banner-caption');
+		
+		heroBg.style.backgroundImage = 'url(/images/' + images[currentIndex] + ')';
+		if(captions[currentIndex]===undefined){
+			bannerCaption.innerText=''
+		}else{
+		bannerCaption.innerText = captions[currentIndex];
+		}
+		currentIndex = (currentIndex + 1) % images.length;
+		setTimeout(updateBanner, 5000);
+	}
+
+	fetchBanners();
+	});
+
+
+
+	</script>
 	<%- include('../layouts/footer.ejs') %>

@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    Wallet:{
+      type:Number,
+      default:0
+    },
     Address: [
       {
         name: { type: String, required: true },

@@ -46,7 +46,11 @@
 									<td class="product-remove" onclick="deleteCart('<%= user %>' ,' <%=cartItems[i]._id %>' , '<%=cartItems[i].ProductId._id%>')" id="deleteItem" ><i  class="far fa-window-close"></i></td>
 									<td class="product-image"><img src="/images/<%= cartItems[i].ProductId.ProductImage[0] %>" alt=""></td>
 									<td class="product-name"><%= cartItems[i].ProductId.ProductName %></td>
-									<td class="product-price"><%= cartItems[i].ProductId.Price %></td>
+									<% if (cartItems[i].ProductId.DiscountedPrice) { %>
+										<td class="product-name"><%= cartItems[i].ProductId.DiscountedPrice %></td>
+									<% }else{ %>
+										<td class="product-name"><%= cartItems[i].ProductId.Price %></td>
+										<% } %>
 									<td class="product-quantity" ><input class="product-quantity-input" name="quantity" id="quantityInput<%= i %>" data-index="<%= i %>" data-product-id="<%= cartItems[i].ProductId._id %>" type="number" placeholder="<%= cartItems[i].Quantity %>" min="1" max="<%= cartItems[i].ProductId.Quantity %>" onchange="updateCart(event)"  oninput="validateQuantity(this)" ></td>
 									<td class="product-total " id="total<%= i %>"><%= cartItems[i].Total%></td>
 									<%if(cartItems[i].ProductId.Quantity === 0 ){%>
@@ -75,7 +79,7 @@
 							<tbody id="totaTable">
 								<tr class="total-data">
 									<td><strong>Subtotal: </strong></td>
-									<td id="allTotal">Rs.<%= subTotal %></td>
+									<td id="allTotal">Rs.<%= Total %></td>
 								</tr>
 								<tr class="total-data">
 									<td><strong>Shipping: </strong></td>
@@ -88,7 +92,7 @@
 							</tbody>
 						</table>
 						<div class="cart-buttons">
-							<% if (!Total) { %>
+							<% if (cartItems.length<=0) { %>
 								<a href="/Checkout?id=<%= user %>" class="boxed-btn black" hidden>Check Out</a>
 
 							<% } else{%>
@@ -365,7 +369,7 @@
 
 					const priceCell = document.createElement('td');
 					priceCell.className = 'product-price';
-					priceCell.textContent = cartItem.ProductId.Price;
+					priceCell.textContent = cartItem.ProductId.DiscountedPrice ? cartItem.ProductId.DiscountedPrice : cartItem.ProductId.Price ;
 					console.log(priceCell.textContent,'thisdnfsdfs');
 					row.appendChild(priceCell);
 					

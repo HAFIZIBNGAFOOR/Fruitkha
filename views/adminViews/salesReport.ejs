@@ -1,28 +1,37 @@
 <%- include('../layouts/adminHeader.ejs') %>
 
-</style>
-<div class="container">
-  <div class="row justify-content-between mr-3">
-    <div class="col-lg-3 md-5 mb-4 d-flex   ">
-      <div><label for="fromDate"> Start Date:</label></div>
-      <div><input type="date" id="from-date" class="form-control"></div>
-    </div>
-    <div class="col-lg-3 md-5 mb-4 d-flex   ">
-      <div><label for="fromDate"> End Date:</label></div>
-      <div><input type="date" id="to-date" class="form-control"></div>
-    </div>
-    <div class="col-lg-6 md-5 grid-margin ml-auto" onclick="searchOrders()">
-      <a type="button" class="btn btn-secondary btn-fw " >Search</a>
-      </div>
-  </div>
-    <div class="row ">       
-        <div class="col-lg-12 grid-margin stretch-card">
+<!-- <div class="main-panel">
+  <div class="content-wrapper"> -->
+  
+    <div class="main-panel"> 
+       <div class="row content-wrapper mr-3">
+            <div class="col-lg-3 md-5 mb-4 d-flex   ">
+                <div>
+                  <label for="fromDate"> Start Date:</label>
+                </div>
+                <div>
+                  <input type="date" id="from-date" class="form-control-sm">
+                </div>
+            </div>
+            <div class="col-lg-3 md-5 mb-4 d-flex  ">
+              <div>
+                <label for="fromDate"> End Date:</label>
+              </div>
+              <div>
+                <input type="date" id="to-date" class="form-control-sm">
+              </div>
+            </div>
+        <div class="col-lg-6 md-5 grid-margin p-auto" onclick="searchOrders()">
+          <a type="button" onclick="searchOrders()" class="btn btn-secondary btn-fw " >Search</a>
+        </div>
+        <div class="col-lg-12 grid-margin stretch-card m p-0">
             <div class="card">
               <div class="card-body">
+                <div class="card-download">
                 <h4 class="card-title">Sales Report</h4>
                 <p class="card-description">
                 </p>
-                <table class="table table-dark">
+                <table class="table table-dark" id="orderTable">
                   <thead>
                     <tr>
                       <th> # </th>
@@ -40,7 +49,7 @@
                       <td> <%= i + 1 %></td>
                       <td> <%= orders[i].orderId %> </td>
                       <td> <%= orders[i].total %></td>
-                      <td> <%= orders[i].date %></td>
+                      <td> <%= orders[i].date.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})%></td>
                       <td> <%= orders[i].payment_method %></td>
                       <td> <a class="text-decoration-none " href="/admin/salesReport/view?id=<%= orders[i]._id %>">View</a></td>
 
@@ -50,21 +59,87 @@
                   </tbody>
                 </table>
               </div>
+                <div class="pt-5"> <button type="button" onclick="download()" class="btn btn-primary btn-fw " > Download PDF </button>    <button type="button" onclick="csvDownload()" class="btn btn-info btn-fw " >Download CSV</button></div>
+
+              </div>
+
             </div>
           </div>
     </div>
-</div>
-<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/3/css/bootstrap.css" />
-<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+ </div> 
+<!-- </div>
+</div> -->
+<%- include('../layouts/adminFooter.ejs') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 <script>
-  function searchOrders(){
+function searchOrders(){
     const fromDate = document.getElementById("from-date").value
     const toDate = document.getElementById("to-date").value
     const allDate = fromDate+  '|' + toDate;
     window.location.href = '/admin/sales-report?Date=' + encodeURIComponent(allDate);
   }
+function download() {
+  console.log('Generating PDF...');
+
+  const cardBodyContent = document.querySelector('.card-download').innerHTML;
+
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: 'sales_report.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(cardBodyContent).save();
+
+  console.log('PDF generation complete.');
+}
+
+function csvDownload() {
+  console.log('Generating CSV...');
+
+  const table = document.getElementById('orderTable');
+  const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+  // Create the CSV content
+  let csvContent = '#,Order Id,Total Amount,Date,Payment Method,Check\n';
+
+  rows.forEach((row, index) => {
+    const cells = row.querySelectorAll('td');
+    const rowData = Array.from(cells).map((cell, cellIndex) => {
+      if (cellIndex === 3) {
+        // Format date value as MM/DD/YYYY
+        const date = new Date(cell.textContent);
+        const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+        return formattedDate;
+      } else {
+        return cell.textContent;
+      }
+    });
+    csvContent += `${rowData.join(',')}\n`;
+  });
+console.log(csvContent,' this is csv')
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+  // Create a download link
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'sales_report.csv';
+
+  // Trigger the download
+  link.click();
+
+  console.log('CSV generation complete.');
+}
+
+
+
+
+
+
+
+
   </script>
-<%- include('../layouts/adminFooter.ejs') %>

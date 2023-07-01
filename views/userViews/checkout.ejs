@@ -88,11 +88,12 @@
 					</div>
 
 
-				<div class="col-lg-12 col-md-12 d-flex " >
-				<input type="text" name="coupon" id="couponcode" class="w-75" placeholder="Enter coupon code">
-				<a class="btn bg-warning" onclick="checkCoupon()" href="">Apply Coupon</a>
+				<div class="col-lg-12 col-md-12  " >
+				<input type="text" name="coupon" id="couponcode" class="form-control-lg w-75 mr-1" placeholder="Enter coupon code">
+				<a class="btn bg-warning btn-lg" onclick="checkCoupon()" href="">Apply Coupon</a>
 				<br>
-				<span id="errorMessage"></span>
+				<div><p id="errorMessage" style="color: red;"></p></div>
+				<div><p id="successMessage" style="color:green;"></p></div>
 				</div>
 
 
@@ -130,12 +131,10 @@
 					</p>
 					<p class="d-flex">
 					  <span>Discount</span>
-					  <% if (subTotal > AllTotal) { %>
-						<span id="offerPrice">Category Discount</span>
-					  <% } else { %>
-					  <span id="offerPrice">No Discount Available</span>
-					  <% } %>
+						<span id="offerPrice"> Rs.<%= discountAmount  %></span>
 					</p>
+					<p id="couponDiscount"></p>
+					<span id="couponId"></span>
 					<hr>
 					<p class="d-flex total-price">
 					  <span>Total</span>
@@ -145,11 +144,6 @@
 				</div>
 			
 
-			
-
-
-				
-	  
 					  <!-- Payment method -->
 					  <div class="col-md-12 col-lg-12 d-flex align-items-center">
 						<div class="cart-detail p-3 p-md-4">
@@ -351,9 +345,6 @@
 			    }
         }
 
-
-
-
 //----------------------------------------RAZOR PAY------------------------------------------------//
 	async function CheckplaceOrder() {
 		console.log('inside check place order');
@@ -381,8 +372,6 @@
                         amount: Rtotal *100, //CHANGE THE AMOUNT AS NEEDED
                     }),
                 };
-
-                //creates new orderId everytime
                 $.ajax(settings).done(function (response) {
                     orderId = response.orderId;
                     console.log(orderId);
@@ -393,9 +382,6 @@
 	
 			document.getElementById("placeOrderButton").onclick = function (e) {
 				e.preventDefault();
-				// console.log('buttin cliasdfasd');
-				
-			// 	console.log('clicked place order button');
                 var options = {
                     key: "rzp_test_5yxkPpWpE23XBK", // Enter the Key ID generated from the Dashboard
                     amount: Rtotal *100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -406,9 +392,6 @@
                     order_id: orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                     handler: function (response) {
 						console.log('handler      function    ');
-                        // alert(response.razorpay_payment_id);
-                        // alert(response.razorpay_order_id);
-                        // alert(response.razorpay_signature);
                         var settings = {
                             url: "/api/payment/verify",
                             method: "POST",
@@ -441,20 +424,11 @@
                 rzp1.open();
                 e.preventDefault();
 			}
-		}
-		//  } catch (error) {
-		// 		console.log(error,'this is oreder id error');
-		// 	}
-        // }    
+	}   
 
 
 	async function placeOrder() {
-
 		console.log('place order ordeadsfsdf');
-		// const fname = document.getElementById('fname').value;
-		// console.log(fname,'1');
-		// const lname = document.getElementById('lname').value;
-		// console.log(lname,'2');
 		var radioButtons = document.getElementsByName("address");
       for (var i = 0; i < radioButtons.length; i++) {
         radioButtons[i].addEventListener('click', function() {
@@ -463,21 +437,19 @@
          
         });
       }
-		console.log(addressId,'3');
+	  	const couponId = document.getElementById('couponId').dataset.couponId;
+		console.log(couponId);
 		const aTotal = document.getElementById('allTotal').textContent;
-		console.log(aTotal,'9');
 		const allTotal = parseInt(aTotal.replace("Rs.", ""));
-		console.log(allTotal,'10');
 		const stotal = document.getElementById('subtotal').textContent;
-		console.log(stotal,'11');
 		const subtotal = parseInt(stotal.replace("Rs.", ""));
-		console.log(subtotal, '  ', allTotal);
 
 			const formData = {
 			address:addressId,
 			allTotal: allTotal,
 			subtotal: subtotal,
-			payment:payment
+			payment:payment,
+			coupon:couponId
 			};
 
 			try {
@@ -518,8 +490,6 @@
 			}
 			} catch (error) {
 			console.log(error);
-			// Handle error
-			// For example, show an error message to the user
 			Swal.fire({
 				title: 'Error',
 				text: 'An error occurred while placing the order',
@@ -534,7 +504,6 @@
 	
 // -------------------------------------Remove Address----------------------------------
 	const removeaddress = async (addressId) => {
-      // Show a confirmation dialog using SweetAlert2
       Swal.fire({
         title: 'Are you sure?',
         text: 'This address will be removed from your checkout page!',
@@ -590,7 +559,7 @@
 async function checkCoupon() {
 	event.preventDefault();
 	const coupon = document.getElementById('couponcode').value;
-	const sub =document.getElementById('subtotal').textContent;
+	const sub =document.getElementById('allTotal').textContent;
 	const total =parseInt(sub.replace('Rs.',""));
 	console.log(coupon,total)
 	let valCoupon = await fetch('/validateCoupon', {
@@ -599,30 +568,28 @@ async function checkCoupon() {
 		body: JSON.stringify({ code: coupon ,total:total}),
 	});
 	let response = await valCoupon.json()
-     console.log(response.gtotal,'  this is responses  ',response.offerPrice);
 	if (response == "fail") {
 		
 		document.getElementById("errorMessage").textContent = "Invalid Coupon";
-		
-	}
-	else {
+
+	}else if(response =='minAmount'){
+		document.getElementById("errorMessage").textContent = "coupon valid for minimum Rs.500 order";
+
+	}else {
 
 		Rtotal = response.gtotal
-		document.getElementById("offerPrice").textContent =`${ Number(response.offerPrice)}%`
-		let offer = Number(response.offerPrice)
-		console.log(offer)
-
-		let stotal = document.getElementById('subtotal').textContent
-		let subtotal = parseInt(stotal.replace('Rs.',""));
-		console.log(subtotal,'32232');
-		let total = document.getElementById('allTotal').textContent
-		let gtotal = parseInt(total.replace('Rs.',""));
-		console.log(gtotal,' thisafsdgtotal');
-		const amt = Number(subtotal) * Number(offer)/100
-
-		gtotal = gtotal - amt
-		console.log(gtotal,'this is gtotal');
-		document.getElementById('allTotal').textContent =`Rs.${gtotal}`;
+		let couponDiscount = document.getElementById("couponDiscount");
+		let spanElement = document.createElement("span");
+		let spanElementId = document.createElement("span");
+		spanElementId.id = "couponId";
+		document.getElementById('couponId').dataset.couponId= response.couponId;
+		console.log(spanElementId.dataset.couponId,' thisdfasdfagad');
+		document.getElementById("successMessage").textContent=`Coupon Amount Rs.${ Number(response.offerPrice)} redeemable`
+		spanElement.textContent = `Coupon Disount :Rs.${ Number(response.offerPrice)}`
+		couponDiscount.appendChild(spanElement);
+		// let discount = document.getElementById('offerPrice').textContent
+		// let offer = Number(response.offerPrice)
+		document.getElementById('allTotal').textContent =`Rs.${Rtotal}`;
 
 }
 }

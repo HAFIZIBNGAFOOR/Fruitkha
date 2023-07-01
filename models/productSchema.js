@@ -25,6 +25,12 @@ const ProductData=new mongoose.Schema({
     Description:{
         type:String,
     },
+    Offer:{
+        type:Number,
+    },
+    CategoryOffer:{
+        type:Number
+    },
     Category:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',

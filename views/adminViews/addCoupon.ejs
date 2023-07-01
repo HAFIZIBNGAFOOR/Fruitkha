@@ -23,18 +23,25 @@
 				}
 				
 				%>
-                <form class="form-outline mb-4" id="form"   action="/admin/addCoupon" method="post">
+                <form class="form-outline mb-4" id="couponForm"   action="/admin/addCoupon" method="post">
                
                 <form class="pt-3">
                   <p id="nameError" style="color: red;"></p>
                   <div class="form-group">
-                    <input type="text" name="code" id="code" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Enter Coupon code" required>
+                    <input type="text" name="code" id="code" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Enter Coupon code" >
+                    <p style="color: red;" id="codeError"></p>
                   </div>
                    <div class="form-group">
-                    <input type="date" id="expiry-date"   name="expiry"  class="form-control form-control-lg" id="exampleInputImage1" placeholder="Enter Coupon Expiry" required>
+                    <input type="date" id="expiry-date"   name="expiry"  class="form-control form-control-lg" id="exampleInputImage1" placeholder="Enter Coupon Expiry" >
+                    <p style="color: red;" id="expiryError"></p>
                   </div>
                   <div class="form-group">
-                    <input type="text" id="off-percent"   name="percent"  class="form-control form-control-lg" id="exampleInputImage1" placeholder="Enter Off Percent" required>
+                    <input type="text" id="min-amount"   name="min"  class="form-control form-control-lg" id="exampleInputImage1" placeholder="Minimum Cart Amount" >
+                    <p style="color: red;" id="minError"></p>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" id="max-amount"   name="max"  class="form-control form-control-lg" id="exampleInputImage1" placeholder="Maximum Redeemable Amount" >
+                  <p style="color: red;" id="maxError"></p>
                   </div>
                 
                 
@@ -74,20 +81,47 @@
     <script src="/assets/js/misc.js"></script> --> 
     <!-- endinject -->
     <script>
-    //   const namePattern = /^[A-Za-z]{4,10}$/;
-    //   let name=document.getElementById('categoryName');
-    //   let nameError=document.getElementById('nameError')
-    //   let form =document.getElementById('form');
-    //   const nameFunction =  () => {
-    //     if (!namePattern.test(name.value)) {
-    //       nameError.textContent = 'Invalid name '
-    //       event.preventDefault();
-    //       return false
-    //     } else {
-    //       nameError.textContent = ''
-    //       return true
-    //     }
-    //   }
-    //  form.addEventListener('submit',nameFunction);
+document.addEventListener('DOMContentLoaded', function() {
+  var form = document.getElementById('couponForm');
+  form.addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    var code = document.getElementById('code').value;
+    var expiry = document.getElementById('expiry-date').value;
+    var minAmount = document.getElementById('min-amount').value;
+    var maxAmount = document.getElementById('max-amount').value;
+
+    var codeRegex =  /^[A-Za-z0-9]{4,10}$/;
+;
+    var positiveNumberRegex = /^[1-9]\d*$/;
+
+    var isValid = true;
+
+    if (!code.match(codeRegex)) {
+      isValid = false;
+      document.getElementById('codeError').textContent ='Enter Valid Coupon code with minimum 4 and maximum 10 .';
+    }
+
+    if (expiry.trim() === '') {
+      isValid = false;
+      document.getElementById('expiryError').textContent ='Expiry date is required.';
+    }
+
+    if (!minAmount.match(positiveNumberRegex)) {
+      isValid = false;
+      document.getElementById('minError').textContent ='Minimum cart amount must be a positive number.';
+    }
+
+    if (!maxAmount.match(positiveNumberRegex)) {
+      isValid = false;
+      document.getElementById('maxError').textContent ='Maximum redeemable amount must be a positive number.';
+    }
+
+    if (isValid) {
+      form.submit();
+    }
+  });
+});
+
     </script>
 <%- include('../layouts/adminFooter.ejs') %>

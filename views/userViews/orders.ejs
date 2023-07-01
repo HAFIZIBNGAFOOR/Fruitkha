@@ -56,7 +56,9 @@
                   <td><label class="badge badge-success">Shipped for Delivery</label></td>
                   <% }else if(Orders[i].status==='Delivered') {%>
                     <td><label class="badge badge-success">Delivered</label></td>
-                    <% } %>
+                    <% }else if(Orders[i].status==='Returned') {%>
+                      <td><label class="badge badge-success">Returned</label></td>
+                      <% } %> 
                 <td><a href="/viewOrder?id=<%= Orders[i]._id %>">view</a></td>
               </tr>
 

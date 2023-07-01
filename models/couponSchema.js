@@ -10,7 +10,11 @@ const CouponSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    percentage:{
+    minCartAmount:{
+        type:Number,
+        required:true
+    },
+    maxRedeemable:{
         type:Number,
         required:true
     },

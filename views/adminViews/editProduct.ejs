@@ -35,31 +35,38 @@
                 <%
              }
              %>
-            <form class="forms-sample" id="editForm" action="/admin/editProduct?id=<%= ProductData._id %>"   enctype="multipart/form-data" method="post" >
+            <form class="forms-sample" onsubmit="return validate()" id="editForm" action="/admin/editProduct?id=<%= ProductData._id %>"   enctype="multipart/form-data" method="post" >
               <div class="form-group">
                 <label for="exampleInputName1">Product Name</label>
                 <input type="text" name="ProductName" class="form-control" value="<%= ProductData.ProductName %>" id="name" placeholder="Name">
+                <p style="color: red;" id="nameerror"></p>
               </div>
               <div class="form-group">
                 <label name="Category" for="exampleFormControlSelect1">Product Category</label>
                 <select class="form-control form-control" name="Category" id="category">
                   <% for (let i = 0; i < Category.length; i++) { %>
-                    <% if (Category[i]._id.toString() === ProductData.Category.toString()) { %>
+                    <% if (Category[i]._id === ProductData.Category) { %>
                       <option value="<%= Category[i]._id %>" selected><%= Category[i].categoryName %></option>
                     <% } else { %>
                       <option value="<%= Category[i]._id %>"><%= Category[i].categoryName %></option>
                     <% } %>
                   <% } %>
                 </select>
+                <p style="color: red;" id="categoryerror"></p>
               </div>
               
               <div class="form-group">
                 <label for="exampleInputName1">Product Quantity</label>
-                <input type="text" name="Quantity" class="form-control" value="<%= ProductData.Quantity %>" id="qauntity" placeholder="Quantity">
+                <input type="text" name="Quantity" onchange="validateNumericInput(event,'quantityNumberError')" class="form-control" value="<%= ProductData.Quantity %>" id="qauntity" placeholder="Quantity">
+                <p style="color: red;" id="quantityerror"></p>
+                <p style="color: red;" id="quantityNumberError"></p>
               </div>
               <div class="form-group">
                 <label for="exampleInputPassword4">Price of the Product </label>
-                <input type="text" name="Price" value="<%= ProductData.Price %>" class="form-control" id="price" placeholder="Price">
+                <input type="text" name="Price" onchange="validateNumericInput(event,'priceNumberError')" value="<%= ProductData.Price %>" class="form-control" id="price" placeholder="Price">
+                <p style="color: red;" id="priceerror"></p>
+                <p style="color: red;" id="priceNumberError"></p>
+
               </div>
               <div class="form-group">
                 <label>Product Image</label>
@@ -84,15 +91,17 @@
                   <% } %>
                 </div> -->
                 <div id="image-preview" class="mt-3 py-1 image-thumbnails">
-                  <% if ( Images.length > 0) { %>
-                    <% for (let i = 0; i < Math.min(3, Images.length); i++) { %>
-                      <div class="image-upload">
-                        <label for="image-upload-<%= i %>">
-                          <img src="/images/<%= Images[i] %>" alt="Image <%= i + 1 %>" onclick="editImage('<%= Images[i] %>', '<%= i %>')" data-index="<%= i %>">
-                        </label>
-                        <input type="hidden" id="image-upload-<%= i %>" accept="image/*" name="existingImages[]" value="/<%= Images[i] %>" >
-                      </div>
+                  <% if (Images.length>0) { %>
+                  <% for (let i = 0; i < 3; i++) { %>
+                    <div class="image-upload">
+                      <label for="image-upload-<%= i %>">
+                        <img src="/images/<%= Images[i] %>" alt="Image <%= i + 1 %>" onclick="editImage('<%= Images[i] %>', '<%= i %>')" data-index="<%= i %>">
+                      </label>
+                      <input type="file" id="image-upload-<%= i %>" accept="image/*" onchange="uploadNewImage(event, '<%= i %>')" name="images" style="display: none;">
+                      <input type="hidden" name="existingImages[]" id="hiddenImages<%= i %>"  value="<%= Images[i] %>">
+                    </div>
                     <% } %>
+                  </div>
                   <% } else { %>
                     <% for (let i = 0; i < 3; i++) { %>
                       <div class="image-upload">
@@ -153,34 +162,98 @@
 //     reader.readAsDataURL(fileInput.files[0]);
 //   }
 // }
+function validate() {
+  let name = document.getElementById('name').value;
+  let category = document.getElementById('category').value;
+  let quantity = document.getElementById('quantity').value;
+  let price = document.getElementById('price').value;
+  let priceIsNan = price.trim();
+  let fileInput = document.getElementById('image');
+  let files = fileInput.files;
+  let numberRegex = /^\d+$/;
+  let categorySelect = document.getElementById('category');
+  let selectedCategory = categorySelect.selectedIndex;
+  let categoryError = document.getElementById('categoryerror');
+
+  if (!name || name.length<3) {
+    document.getElementById('nameerror').textContent = 'Please Enter valid a valid Name';
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('categoryerror').textContent = ''
+    document.getElementById('quantityerror').textContent = ''
+    document.getElementById('imageerror').textContent = ''
+    return false;
+  }else if (!selectedCategory) {
+    categoryError.textContent = 'Please select a category.';
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('quantityerror').textContent = ''
+    document.getElementById('imageerror').textContent = ''
+    return false;
+  }else if(quantity < 1){
+    console.log('quantity checked');
+    document.getElementById('quantityerror').textContent = 'please enter a valid quantity'
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('categoryerror').textContent = ''
+    return false
+  }
+  else if( price <1 ){
+    console.log('price checkked');
+    document.getElementById('priceerror').textContent = 'please enter a valid Price'
+    document.getElementById('quantityerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('categoryerror').textContent = ''
+    return false
+  }else{
+    console.log('trruuuuueeeeee');
+    document.getElementById('categoryerror').textContent = ''
+    document.getElementById('priceerror').textContent = ''
+    document.getElementById('nameerror').textContent = ''
+    document.getElementById('quantityerror').textContent = ''
+    return true
+  }
+}
+function validateNumericInput(event,eventId) {
+  let input = event.target;
+  let value = input.value.trim();
+  let numericValue = value.replace(/\D/g, '');
+  input.value = numericValue;
+  if (numericValue === '') {
+    document.getElementById(eventId).textContent = 'Please enter a number.';
+  } else {
+    document.getElementById(eventId).textContent = '';
+  }
+}
 function editImage(imageName, index) {
   var fileInput = document.getElementById(`image-upload-${index}`);
-  
-  // Check if a file is selected
+  fileInput.inputMode=fileInput
+
   if (fileInput.files && fileInput.files[0]) {
     var reader = new FileReader();
 
     reader.onload = function (e) {
-      // Find the image element with the corresponding index
       var imageElement = document.querySelector(`[data-index="${index}"]`);
-      // Set the new image source
       imageElement.src = e.target.result;
-
-      // Update the req.files object (assuming it is accessible in the current scope)
+      console.log(imageElement.src);
       if (req.files && req.files[index]) {
         req.files[index].path = fileInput.files[0].path;
         req.files[index].originalname = fileInput.files[0].name;
       }
     };
-
     reader.readAsDataURL(fileInput.files[0]);
   }
 }
 
+
+var selectedFileName; 
+
 function uploadNewImage(event, index) {
   var file = event.target.files[0];
-
+  var hiddenInput = document.getElementById(`hiddenImages${index}`);
+  hiddenInput.value = ""
   if (file) {
+    selectedFileName = file.name; 
+
     var reader = new FileReader();
 
     reader.onload = function (e) {
@@ -190,12 +263,12 @@ function uploadNewImage(event, index) {
 
     reader.readAsDataURL(file);
 
-    // if (req.files && req.files[index]) {
-    //   req.files[index].path = file.path;
-    //   req.files[index].originalname = file.name;
-    // }
+    var hiddenInput = document.getElementById(`image-upload-${index}`);
+    hiddenInput.value = selectedFileName;
   }
 }
+
+
 
 
 

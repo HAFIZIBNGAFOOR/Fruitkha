@@ -77,22 +77,22 @@
     
     
             <div class="profile">
-                <div class="container">
-                    <a type="button"  href="/shop" class="btn btn-outline-info btn-icon-text">
+                <div class="container text-left ">
+                    <a type="button"  href="/shop" class="btn btn-outline-info btn-icon-text mb-4">
                         <i class="fas fa-arrow-left"></i> Go Back To Shop </a>
     <section class="order_details section_gap">
            
         <div class="container">
         
-            <h3 class="title_confirmation">Thank you. Your order has been received.</h3>
+            <h5 class="title_confirmation text-success"><center><b>Thank you. Your order has been received.</b></center></h5>
             <div class="row order_d_inner align-items-center">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12 col-md-12">
                     <div class="details_item">
-                    <h4>Order Info</h4>
-                    <ul class="list">
+                    <h4> <center>Order Info</center></h4>
+                    <ul class="list text-left">
                     <li><a ><span>Order id</span> : <%= latestOrder.orderId %></a></li>
                     <li><a ><span>Date</span> : <%= latestOrder.date.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) %> <%= latestOrder.date.toLocaleTimeString('en-US', {hour: 'numeric', minute:'numeric'}) %></a></li>
-                    <li><a ><span>Total</span> : <%= latestOrder.total ? latestOrder.total : latestOrder.subtotal %></a></li>
+                    <li><a ><span>Total</span> : Rs. <%= latestOrder.total ? latestOrder.total : latestOrder.subtotal %></a></li>
                     <li><a ><span>Address</span> : <%= latestOrder.addressId %></a></li>                   
                     <li><a ><span>Payment method</span> : <%= latestOrder.payment_method %> </a></li>
                     
@@ -105,54 +105,66 @@
                     <h2>Order Details</h2>
                     <div class="table-responsive">
                         
-                        <table class="table">
-                            <table class="table">
+                        <table class="table table table-bordered">
+                            <table class=" table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th scope="col"> <h3>Product</h3></th>
-                                        <th scope="col"><h3>Quantity</h3></th>
-                                        <th scope="col"><h3>Total</h3></th>
+                                        <th scope="col"> <p><b>Product</b></p></th>
+                                        <th scope="col"><p><b>Quantity</b></p></th>
+                                        <th scope="col"><p><b>Total</b></p></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="text-left">
     
-
                                         <% var totalPrice = 0 %>  
                                     <% latestOrder.product.forEach(function(productItem) { %>
-                                    <tr>
+                                    <tr class="py-1">
                                         <td>
                                             <p><%= productItem.name %></p>
                                         </td>
                                         <td>
-                                            <h5><%= productItem.quantity %></h5>
+                                            <p><%= productItem.quantity %></p>
                                         </td>
                                         <td>
-                                            <p><%= productItem.price * productItem.quantity %></p>
+                                            <p>Rs.<%= productItem.price * productItem.quantity %></p>
                                         </td>
                                     </tr>
                                     <% totalPrice += productItem.price * productItem.quantity %>
                                   <% }) %>
                                   <tr>
                                         <td>
-                                            <h4>Subtotal: </h4>
+                                            <p>Subtotal: </p>
                                         </td>
                                         <td></td>
-                                        <td><p><%= totalPrice %></p></td>
+                                        <td><p>Rs.<%= totalPrice %></p></td>
                                       </tr>
+                                      <% if (latestOrder.Coupon.maxRedeemable) { %>
+                                        <tr>
+                                            <td>
+                                                <p>Coupon Discount :</p>
+                                            </td>
+                                            <td>
+                                                <h5></h5>
+                                            </td>
+                                            <td>
+                                                <p>Rs.<%= latestOrder.Coupon.maxRedeemable %></p>
+                                            </td>
+                                        </tr>
+                                        <% } %>
                                     <tr>
                                         <td>
-                                            <h4>Discount total : </h4>
+                                            <p>Discount total : </p>
                                         </td>
                                         <td>
                                             <h5></h5>
                                         </td>
                                         <td>
-                                            <p><%= latestOrder.total ? latestOrder.total : latestOrder.subtotal %></p>
+                                            <p>Rs.<%= latestOrder.total ? latestOrder.total : latestOrder.subtotal %></p>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <h4>Shipping</h4>
+                                            <p>Shipping</p>
                                         </td>
                                         <td>
                                             <h5></h5>
@@ -161,17 +173,28 @@
                                             <p>Free</p>
                                         </td>
                                     </tr>
+                                    
                                     <tr>
                                         <td>
-                                            <h4>Total</h4>
+                                            <p><b>Total</b></p>
                                         </td>
                                         <td>
-                                            <p><%= latestOrder.total ? latestOrder.total : latestOrder.subtotal %></p>
+                                            <h5></h5>
+                                        </td>
+                                        <td>
+                                            <p><b>Rs.<%= latestOrder.total ? latestOrder.total : latestOrder.subtotal %></b></p>
                                         </td>
                                     </tr>
-
+                                    
                                 </tbody>
                             </table>
+                           
+                                <!-- <div class="col-lg-12">
+                                    <div class="details_item">
+                                        <span>Coupon Discount : Rs.<%= latestOrder.Coupon.maxRedeemable %></span>
+                                        </div>
+                                        </div> 
+                            -->
                                    
                     </div>
                 </div>

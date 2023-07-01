@@ -24,7 +24,8 @@
                 <tr>
                   <th> # </th>
                   <th> Coupon Code </th>
-                  <th> Off % </th> 
+                  <th> Max Redeemable </th> 
+                  <th> Minimum cart Amount </th> 
                   <th> Expiry </th> 
                   <th> Status </th>            
                 </tr>
@@ -35,7 +36,8 @@
                 <tr>
                   <td> <%= i+1 %> </td>              
                   <td class="py-1"><%= coupon[i].code %></td>
-                  <td> <%= coupon[i].percentage %> % </td>              
+                  <td> <%= coupon[i].maxRedeemable %>  </td> 
+                  <td> <%= coupon[i].minCartAmount %>  </td>             
                   <td> <%= coupon[i].date %> </td>
                   <td> <%= coupon[i].status %> </td>
                 </tr>

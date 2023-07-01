@@ -1,7 +1,6 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
-ObjectId = Schema.ObjectId;
 
 const orderSchema = new Schema({
   userId: {
@@ -28,6 +27,10 @@ const orderSchema = new Schema({
     type: String,
     required: true,
     default: "processing",
+  },
+  Coupon:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Coupon'
   },
   payment_method: {
     required: true,

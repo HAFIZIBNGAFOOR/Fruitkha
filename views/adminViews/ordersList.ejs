@@ -85,8 +85,14 @@
                       <% if (Orders[i].status === "cancelled") { %>
                         <span   class=" text-black btn-maximize"><%= Orders[i].status %></span>
                         <% } %>
+                        <% if (Orders[i].status === "Delivered") { %>
+                          <span   class=" text-black btn-maximize"><%= Orders[i].status %></span>
+                          <% } %>
+                          <% if (Orders[i].status === "Returned") { %>
+                            <span   class=" text-black btn-maximize"><%= Orders[i].status %></span>
+                            <% } %>
                 </td>
-                <% if (Orders[i].status !== 'cancelled') { %>
+                <% if (Orders[i].status !== 'cancelled' && Orders[i].status !=='Delivered' && Orders[i].status !=='Returned') { %>
                   <td><a href="/admin/cancel-order?id=<%= Orders[i]._id %>"  class="btn btn-danger btn btn-sm">Cancel Order</a></td>
                 <% }else{ %>
                   <td ><span   class=" text-black btn-maximize"><%= Orders[i].status %></span></td>

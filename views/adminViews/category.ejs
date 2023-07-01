@@ -55,6 +55,7 @@
   </div>
   </div>
   </div>
+  <%- include('../layouts/adminFooter.ejs') %>
 <script>
 function openDeleteModal(idOfProduct) {
   document.getElementById('deleteID').value = idOfProduct;
@@ -83,7 +84,7 @@ function deleteCategory() {
 };    
 </script>
 
-<%- include('../layouts/adminFooter.ejs') %>
+
 <div class="modal fade" id="unblockBut" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
 aria-labelledby="staticBackdropLabel" aria-hidden="true">
 <div class="modal-dialog">
@@ -99,5 +100,5 @@ aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       <button class="btn btn-danger mt-1 mb-1" onclick="return deleteCategory()" id="unblock-Button">Delete</button>
-
+ 
       <!-- <button class="btn btn-success mt-1 mb-1" onclick='return unblockUser()' id="unblock-Button">UnBlock</button> -->
