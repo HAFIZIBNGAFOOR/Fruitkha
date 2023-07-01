@@ -127,7 +127,6 @@ const placeOrder = async (req,res)=>{
         if(Orders.length >0){
            latestOrder = Orders[0];
         }
-        console.log( latestOrder,' this is orders   sss', latestOrder.Coupon.maxRedeemble);
         res.render('orderSuccess',{latestOrder,user});
     } catch (error) {
         console.log('order success page error',error);
