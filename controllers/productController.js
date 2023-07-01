@@ -183,6 +183,7 @@ const loadShop=async (req,res)=>{
             query = {Category:category}
         }
         const user = req.session.userData;
+        console.log(user, ' this is user');
         await Product.paginate(query,{page:currentPage,limit:pageSize},function(err,result){
             if(err){
                 console.log('pagination error '+err);
@@ -213,7 +214,6 @@ const loadShop=async (req,res)=>{
                     Product,
                     categoryList,
                     user,
-                    walletAmount
                 });
             
             }
