@@ -30,7 +30,7 @@
                         <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> 
                           <div class="card-body">
                             <div class="billing-address-form">
-                                <form method="post" action="/editCheckOutAddress">
+                                <form method="post" action="/edit-checkOutAddress">
                                     <input type="hidden" name="userId" value="<%= user._id%>">
                                     <p><input type="text" name="name" placeholder="Address Name" value="<%=address.name %>"></p>
                                     <p><input type="tel" name="number" placeholder="Number" value="<%=address.number %>"></p>
@@ -38,7 +38,7 @@
                                     <p><input type="text" name="city" placeholder="City" value="<%=address.city %>"></p>
                                     <p><input type="text" name="state" placeholder="State" value="<%=address.state %>"></p>
                                     <p><input type="tel" name="pincode" placeholder="Pincode" value="<%=address.pincode %>"></p>
-                                    <button style="color: #F28123;" type="submit" class="btn btn-md">Submit</button>
+                                    <button style="color: #F28123;" type="submit" class="btn btn-lg">Submit</button>
                                   </form>
                             </div>
                           </div>

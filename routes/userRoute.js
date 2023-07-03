@@ -42,6 +42,7 @@ userRoute.post('/delete-cartItem',cartController.deleteCart)
 userRoute.get('/Checkout',auth.userlogin,userController.loadCheckout);
 userRoute.post('/Checkout',orderController.placeOrder)
 userRoute.get('/edit-checkOutAddress',userController.editCheckoutAddress)
+userRoute.post('/edit-checkOutAddress',userController.postCheckoutEditAddress)
 userRoute.post('/removeaddress-checkoutpage',userController.deleteCheckoutAddress);
 userRoute.get('/checkout-addAddress',userController.addCheckoutAddress);
 userRoute.post('/checkout-addAddress',userController.saveCheckoutAddress);

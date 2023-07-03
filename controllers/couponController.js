@@ -17,6 +17,7 @@ const laodCoupon = async (req,res)=>{
         const coupon =  await Coupon.find({}).sort({timestampField:-1})
         res.render('coupon',{coupon})
     } catch (error) {
+      res.render('adminError')
         console.log('this is load coupon error ',error);
     }
 }
@@ -24,6 +25,7 @@ const addCoupon = async(req,res)=>{
     try {
         res.render('addCoupon')
     } catch (error) {
+      res.render('adminError')
         console.log('this is add coupon error ',error);
     }
 }
@@ -44,6 +46,7 @@ const saveAddCoupon = async (req,res)=>{
         console.log('coupon saved');
         res.render('addCoupon',{message:' Added Coupon successfully'})
     } catch (error) {
+      res.render('adminError')
         console.log('this is save add coupon ',error);
     }
 }

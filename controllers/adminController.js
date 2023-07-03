@@ -32,6 +32,7 @@ const loadAdminLogin=async(req,res)=>{
 
     } catch (error) {
         console.log('admin login error '+error);
+        res.render('adminError')
     }
 }
 const loginAdmin=async(req,res)=>{
@@ -130,7 +131,8 @@ const loginAdmin=async(req,res)=>{
             res.render('adminLogin',{message:' Not an Admin'})
         }
     } catch (error) {
-        console.log('login admin error'+error);
+      res.render('adminError')
+      console.log('login admin error'+error);
     }
 }
 const adminDashboard = async (req,res)=>{
@@ -186,7 +188,8 @@ const adminDashboard = async (req,res)=>{
         const latestOrders = await Order.find({status:'Delivered'}).sort({date:-1}).limit(4);
         res.render('adminHome',{totalSales,weeklySales,YearlySales,dailyOrder,weeklyOrder,annualOrder,latestOrders})
     } catch (error) {
-        console.log('this is admin dashboard errror ', error);
+      res.render('adminError')
+      console.log('this is admin dashboard errror ', error);
     }
 }
 const loadDashboard=async (req,res)=>{
@@ -237,15 +240,13 @@ const loadDashboard=async (req,res)=>{
               }
             }
           ]);
-          
-          
-          console.log(categories);
-          console.log(salesData);
+
         if(salesData){
             res.json(salesData);
         }
         
     } catch (error) {
+      res.render('adminError')
         console.log('loading dashboard error',error);
     }
 }
@@ -307,6 +308,7 @@ const  dailySalesReport = async(req,res)=>{
           ]);
         res.render('dailySales',{formattedDate,totalSales,numOrders,topProducts})
     } catch (error) {
+      res.render('adminError')
         console.log('this is daily sales report error ',error);
     }
 }
@@ -363,7 +365,8 @@ const  weeklySalesReport = async(req,res)=>{
           ]);
         res.render('weeklySales',{formattedStartDate,todayformattedEndDate, numOrders ,topProducts,totalSales})
     } catch (error) {
-        console.log('this is daily sales report error ',error);
+      res.render('adminError')
+      console.log('this is daily sales report error ',error);
     }
 }
 
@@ -409,7 +412,8 @@ const salesReport = async(req,res)=>{
         console.log(orders);
         res.render('salesReport',{orders});
     } catch (error) {
-        console.log('this is  sales report error ',error);
+      res.render('adminError')
+      console.log('this is  sales report error ',error);
     }
 }
 const salesReportView = async (req,res)=>{
@@ -418,7 +422,8 @@ const salesReportView = async (req,res)=>{
         const order = await Order.findById({_id:id});
         res.render('viewOrder',{order});
     } catch (error) {
-        console.log('this is sales report view error ',error);
+      res.render('adminError')
+      console.log('this is sales report view error ',error);
     }
 }
 

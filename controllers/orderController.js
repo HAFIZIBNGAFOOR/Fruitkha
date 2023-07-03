@@ -17,6 +17,7 @@ const viewSingleOrder =async(req,res)=>{
         console.log(order,' this is order');
         res.render('singleOrder',{order})
     } catch (error) {
+      res.render('adminError')
         console.log('this is view single order error ',error);
     }
 }
@@ -55,6 +56,7 @@ const changeStatus = async (req, res) => {
       }
       res.redirect("/admin/orders");
     } catch (error) {
+      res.render('adminError')
       console.log(error.message);
     }
   };
@@ -65,6 +67,7 @@ const cancelOrder= async (req,res)=>{
         const Orders = await Order.find({}).sort({date:-1});
         res.render('ordersList',{Orders});
     } catch (error) {
+      res.render('adminError')
       console.log('this is cancel order error ',error);
     }
 }
@@ -168,10 +171,19 @@ const viewOrders = async (req,res)=>{
 const deleteOrder = async (req,res)=>{
     try {
         const orderId = req.query.id;
-        const user = req.session.userData._id;
+        const user1 = req.session.userData
         const oldOrder =await Order.findByIdAndUpdate({_id:orderId},{$set:{status:'cancelled'}});
-        const Orders = await Order.find({userId:user}).sort({date:-1});
-        console.log(Orders);
+        const order = await Order.find({_id:orderId});
+        console.log(order,' this so order',order[0].payment_method);
+        let newuser
+        if(order[0].payment_method ==='RazorPay'){
+           newuser =await User.findByIdAndUpdate({_id:user1._id},{ $inc: { Wallet: order[0].total } },
+            { new: true });
+        }
+        console.log(newuser);
+        const Orders = await Order.find({userId:user1._id}).sort({date:-1});
+        req.session.userData = newuser
+        const user = req.session.userData
         res.render('orders',{Orders,user});
     } catch (error) {
       res.render('error')
@@ -186,9 +198,11 @@ const returnOrder = async(req,res)=>{
     const amount = order.total;
     console.log(amount);
     await Order.findByIdAndUpdate({_id:id},{$set:{status:'Returned'}})
-    const userData = await User.findByIdAndUpdate({_id:user1._id},{$set:{Wallet:amount}});
+    const userData = await User.findByIdAndUpdate({_id:user1._id},{ $inc: { Wallet: amount } },
+      { new: true });
     req.session.userData= userData;
     const user = req.session.userData;
+    console.log(user);
     const Orders = await Order.find({userId:user1._id}).sort({date:-1})
     res.render('orders',{Orders,user})
   } catch (error) {

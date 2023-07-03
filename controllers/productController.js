@@ -6,7 +6,6 @@ const loadHome=async(req,res)=>{
         const product=await Product.find({}).limit(6);
         if(req.session.user){
             const user=req.session.userData;
-            console.log(user);
             res.render('home',{user:user,Product:product})
         }else{
             res.render('home',{Product:product});
@@ -53,6 +52,7 @@ const productLoad = async (req, res) => {
         pageSize: pageSize
       });
     } catch (error) {
+        res.render('adminError')
       console.log('product loading error ' + error);
     }
   };
@@ -62,6 +62,7 @@ const addProduct = async (req,res)=>{
         const Categories=await Category.find({});
         res.render("addProduct",{Categories:Categories});
     } catch (error) {
+        res.render('adminError')
         console.log('this is add product error '+ error);
     }
 }
@@ -90,16 +91,15 @@ const SaveAddProduct = async (req,res)=>{
                 Description:req.body.Description
             })
            await ProductToSave.save();
-           console.log(ProductToSave+" this is product details");
            res.render('addProduct',{message:'Added New Product Successfully',errormessage:'',Categories:Categories})
-           console.log('adding new product success');
         }else{
             res.render('addProduct',{message:'',errormessage:'Product already exists',Categories:Categories})
         }
         }else{
             res.render('addproduct',{message:'', errormessage:'Please fill all the fields',Categories:Categories})
         }
-    } catch (error) {    
+    } catch (error) {   
+        res.render('adminError') 
         console.log('saving add product error '+error);
     }
 }
@@ -110,9 +110,9 @@ const editProduct = async (req,res)=>{
         const CategoryData=await Category.find({});
         const ProductData = await Product.findById({_id:id})
         const Images =  ProductData.ProductImage
-        console.log(Images[0],'this is s');
         res.render('editProduct',{ProductData:ProductData,Category:CategoryData,Images});
     } catch (error) {
+        res.render('adminError')
         console.log('edit product error '+error);
     }
 }
@@ -127,7 +127,6 @@ const saveEditedProduct=async(req,res)=>{
     const desc= req.body.Description;
     const uploadedFiles = req.files;
     const existingImages = req.body.existingImages || [];
-    console.log(existingImages,' this is existing images',uploadedFiles);
     const allFiles = existingImages.concat(uploadedFiles);
     const imageFilenames = allFiles.map(file => {
         if (typeof file === 'string') {
@@ -136,7 +135,6 @@ const saveEditedProduct=async(req,res)=>{
           return file.filename;
         }
       }).filter(filename => filename.trim() !== '');
-    console.log(imageFilenames,req.files,' this is image and req.files');
     const productData = await Product.findById({_id:id})
     const categoryData=await Category.find({});
     const Images = productData.ProductImage
@@ -151,12 +149,11 @@ const saveEditedProduct=async(req,res)=>{
                 Category:category
         }})
         res.redirect('/admin/product')
-        console.log('edited successfully');
     }else{
         res.render('editProduct',{message:'enter a valid details', ProductData:productData,Category:categoryData,Images})
-        console.log('else worked');
     }    
     } catch (error) {
+        res.render('adminError')
         console.log('this is submitting error of edit '+error);
     }
 }
@@ -164,11 +161,11 @@ const saveEditedProduct=async(req,res)=>{
 const deleteProduct=async (req,res)=>{
     try {
         const id=req.body.id;
-        console.log('delete product id '+id);
         await Product.findByIdAndDelete({_id:id});
         const remainingProduct= await Product.find({});
         res.render('product',{Product:remainingProduct,message:'deleted successfully'})
     } catch (error) {
+        res.render('adminError')
         console.log('deleting Product  error '+error);
     }
 }
@@ -242,7 +239,6 @@ const singleProductLoad=async(req,res)=>{
 
             });
         }
-       
     } catch (error) {
         res.render('error')
 
@@ -256,9 +252,9 @@ const loadOffer = async (req,res)=>{
               { CategoryOffer: { $gt: 0 } }
             ]
           });
-         console.log(offer,' this is offers');
         res.render('offer',{offer})
     } catch (error) {
+        res.render('adminError')
         console.log(' trhis is load offer error ',error);
         // res.render('error')
     }
@@ -268,7 +264,7 @@ const addOffer = async (req,res)=>{
         const Products =await Product.find({})
         res.render('addOffer',{Products})
     } catch (error) {
-        // res.render('error')
+        res.render('adminError')
         console.log('this is addOffer error ',error);
     }
 }
@@ -276,7 +272,6 @@ const saveProductOffer = async (req,res)=>{
     try {
         const product =  await Product.findById(req.body.Product);
         const offer = parseInt(req.body.offer);
-        console.log(offer);
         const offerPrice = (offer/100)* product.Price
         console.log(offerPrice,product.Price,' this is offer price');
            if(!product.Offer && !product.CategoryOffer){
@@ -297,8 +292,8 @@ const saveProductOffer = async (req,res)=>{
                 res.render('addoffer',{Products,message:'Category offer is available for selected product'});
            }       
     } catch (error) {
+        res.render('adminError')
         console.log('this is save product offer error ',error);
-        // res.render('error')
     }
 }
 

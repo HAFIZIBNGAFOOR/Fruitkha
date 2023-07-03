@@ -20,7 +20,6 @@ const loadLogin=(req,res)=>{
        }else{
         res.render('userLogin')
        }
-
     } catch (error) {
         res.render('error')
         console.log('login rendering error '+error);
@@ -88,10 +87,8 @@ const sendOTPMail = (email, otpCode) => {
       return new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
-            console.log('Error sending email:', error);
             resolve(false);
           } else {
-            console.log('Email sent:', info.response);
             resolve(true);
           }
         });
@@ -185,7 +182,6 @@ const verifyUser=async(req,res)=>{
         const otp=req.body.otp;
         const userData=await User.findOne({email:req.body.email})
         if(otp){
-            console.log(otp);
             if(otp==req.session.otp){
                 console.log('otp matched');
                 req.session.userData=userData
@@ -225,7 +221,6 @@ const loadCheckout = async(req,res)=>{
     try {
         const userId = req.query.id;
         const cartItems =await CartItem.find({UserId:userId}).populate('ProductId');
-        console.log(cartItems);
         let AllTotal = 0
         let subTotal = 0
         cartItems.forEach((item)=>{
@@ -233,14 +228,12 @@ const loadCheckout = async(req,res)=>{
             subTotal += item.subTotal;
         }) 
         let discountAmount = subTotal-AllTotal;
-        console.log(subTotal,AllTotal,discountAmount,'-------');
         let user;
         if(req.session.userData){
             user = req.session.userData
         }
         const userdata = await User.findById(user).populate('Address');
         const Addresses = userdata.Address || [];
-        console.log(Addresses.length,' thi sis addresssss');
         res.render('checkout',{
             cartItems: cartItems,
             userdata: userdata,
@@ -262,7 +255,6 @@ const editCheckoutAddress = async(req,res)=>{
             { _id: req.session.userData._id },
             { Address: { $elemMatch: { _id: addressId } } }
           );
-         console.log(user.Address[0]);
         res.render('editCheckoutAddress',{
             address:user.Address[0],
             user
@@ -270,6 +262,43 @@ const editCheckoutAddress = async(req,res)=>{
     } catch (error) {
         res.render('error')
         console.log('this is edit checkout error ',error);
+    }
+}
+const postCheckoutEditAddress = async (req,res)=>{
+    try {
+        const user = req.session.userData._id
+        const id = req.query.id
+        const userData = await User.updateOne(
+            { Address: { $elemMatch: { _id: id } } },
+            { $set: { "Address.$": req.body } },
+        );
+        const savedAddress = await User.findById(user);
+        const cartItems =await CartItem.find({UserId:user}).populate('ProductId');
+        let AllTotal = 0
+        let subTotal = 0
+        cartItems.forEach((item)=>{
+            AllTotal +=item.Total;
+            subTotal += item.subTotal;
+        }) 
+        let discountAmount = subTotal-AllTotal;
+        let userId;
+        if(req.session.userData){
+            userId = req.session.userData
+        }
+        const userdata = await User.findById(userId).populate('Address');
+        const Addresses = userdata.Address || [];
+        res.render('checkout',{
+            cartItems: cartItems,
+            userdata: userdata,
+            AllTotal,
+            subTotal,
+            Addresses: Addresses,
+            user,
+            discountAmount
+        });
+    } catch (error) {
+        res.render('error')
+        console.log(error);
     }
 }
 const deleteCheckoutAddress= async (req,res)=>{
@@ -280,7 +309,6 @@ const deleteCheckoutAddress= async (req,res)=>{
             {$pull:{Address:{_id:id}}},
             {new:true}
         );
-        console.log(deleteUserData);
         res.json({
             res:'success'
         })
@@ -302,7 +330,6 @@ const saveCheckoutAddress= async(req,res)=>{
     try {
         const user = req.session.userData._id;
         const address = req.body;
-        console.log(address);
         const addressExists = await User.findOne({_id:req.session.userData._id},{
             Address:{
                 $elemMatch:{
@@ -311,20 +338,35 @@ const saveCheckoutAddress= async(req,res)=>{
                 }
             }
         })
-        if(addressExists.Address.length > 0){
-            console.log('this address is already exists',addressExists)
-            res.render('addnewAddressCheckout',{user,message:'This address already exists'})
-        }else{
-            const userData = await User.findByIdAndUpdate(
-                {_id:user},
-                {$addToSet:{Address:req.body}}
-            );
-            console.log(userData);
-            // userData.Address.push(req.body);
+        
+            const result = await User.updateOne(
+                { _id: user },
+                { $addToSet: { Address: address } }
+              );
             const savedAddress = await User.findById(user);
-            console.log(savedAddress.Address[0],' length ===',savedAddress.Address.length);
-            res.redirect('/Checkout')
+            const cartItems =await CartItem.find({UserId:user}).populate('ProductId');
+        let AllTotal = 0
+        let subTotal = 0
+        cartItems.forEach((item)=>{
+            AllTotal +=item.Total;
+            subTotal += item.subTotal;
+        }) 
+        let discountAmount = subTotal-AllTotal;
+        let userId;
+        if(req.session.userData){
+            userId = req.session.userData
         }
+        const userdata = await User.findById(userId).populate('Address');
+        const Addresses = userdata.Address || [];
+        res.render('checkout',{
+            cartItems: cartItems,
+            userdata: userdata,
+            AllTotal,
+            subTotal,
+            Addresses: Addresses,
+            user,
+            discountAmount
+        });
     } catch (error) {
         res.render('error')
         console.log('this is save checkout error ', error);
@@ -334,7 +376,6 @@ const saveCheckoutAddress= async(req,res)=>{
 const loadProfile = async (req,res)=>{
     try {
         const user = await User.findById({_id:req.session.userData._id});
-        console.log(user);
         res.render('profile',{
             user,
         });
@@ -440,7 +481,6 @@ const loadEditAddress =async (req,res)=>{
           );
         const user = req.session.userData
         const address = userAddress.Address[0];
-        console.log(address ,' this is address load edit');
         res.render('editAddress', {user,address})
     } catch (error) {
         res.render('error')
@@ -457,7 +497,6 @@ const saveEditedAddress = async (req,res)=>{
         const city = req.body.city
         const state = req.body.state
         const id = req.body.id;
-        console.log(id);
         const savedAddress = await User.updateOne(
             {Address:{$elemMatch:{_id:id}}},
             {$set:{
@@ -470,7 +509,6 @@ const saveEditedAddress = async (req,res)=>{
             }},
             {new:true}
         );
-        console.log(savedAddress,' this is user address');
         res.redirect('/address')
     } catch (error) {
         res.render('error')
@@ -487,7 +525,6 @@ const deleteAddress = async(req,res)=>{
             );
             const userData = await User.findById(user._id)
             const Addresses = userData.Address
-            console.log(userData.Address,' this is delete address');
                 res.render('address',{userData,Addresses,user})
         } catch (error) {
             res.render('error')
@@ -541,14 +578,11 @@ const forgotPassword = async (req,res)=>{
         const userData = await User.find({email:email})
         if(userData){
             const randomString = randomstring.generate()        
-        console.log(randomString,userData);
         const updatedUser = await User.updateOne(
             {email:email},
             {$set:{token:randomString}}
             )
         const result = await sendResetPasswordMail(userData[0].fname,email,randomString);
-        console.log(result,' this is sent otp mail');
-        
             res.render('resetPassword',{successmessage:'Please check your mail to Reset your password.',user})
         }else{
             res.render('resetPassword',{message:"Entered Email doesn't exists",user});
@@ -575,7 +609,6 @@ const forgetVerify = async (req,res)=>{
 const resetPassword =async(req,res)=>{
     try {
         const user_id = req.body.id
-        console.log(req.body,'this is body ');
         const password = req.body.password;
         const securedPass =await  securePassword(password);
         const passUpdated = await User.findByIdAndUpdate(
@@ -614,12 +647,12 @@ const resetPassword =async(req,res)=>{
         }
        res.render('userManage',{userData:userData,currentPage,endPage,startPage,totalPages,pageSize}) 
     } catch (error) {
+        res.render('adminError')
         console.log('rendering userpage error '+error);
     }
 }
  const blockUser=async(req,res)=>{
        const userData=req.body.id;
-       console.log(userData);
        const userToBlock=await User.findOne({_id:req.body.id});
         await User.findByIdAndUpdate({_id:req.body.id},{$set:{blockStatus:true}})
         .then((response)=>{
@@ -628,6 +661,7 @@ const resetPassword =async(req,res)=>{
         })
     //    res.redirect('/admin/users')
     .catch ((error)=>{
+        res.render('adminError')
         console.log('blocking user error '+error);
     })
 }
@@ -641,6 +675,7 @@ const unBlockUser= async (req,res)=>{
         }
         res.redirect('/admin/users')
     } catch (error) {
+        res.render('adminError')
         console.log('unblocking user error '+error);
     }
 }
@@ -659,6 +694,7 @@ module.exports={
     deleteCheckoutAddress,
     addCheckoutAddress,
     saveCheckoutAddress,
+    postCheckoutEditAddress,
 
     loadProfile,
     AddProfile,

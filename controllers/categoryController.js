@@ -8,14 +8,15 @@ const categoryLoad =async(req,res)=>{
         res.render('category',{categoryData:categoryData});
  
     } catch (error) {
+        res.render('adminError')
         console.log(error);
     }
 }
 const addCategory=async(req,res)=>{
     try {
-
         res.render('addCategory');
     } catch (error) {
+        res.render('adminError')
         console.log('rendering add category page error '+error);
     }
 }
@@ -56,6 +57,7 @@ const categoryAdding=async (req,res)=>{
            
           
     } catch (error) {
+        res.render('adminError')
         console.log('Category adding  error '+error);
     }
 }
@@ -66,6 +68,7 @@ const deleteCategory=async(req,res)=>{
     const categoryList=await Category.find({isDeleted:false});
     res.render('category',{message1:'category delete success',categoryData:categoryList})
    } catch (error) {
+    res.render('adminError')
     console.log('edit Category error '+error);
    }
 }
@@ -75,6 +78,7 @@ const editCategory =async (req,res)=>{
         console.log(ToeditData+"this is category to edit");
         res.render('editCategory',{ToEdit:ToeditData})
     } catch (error) {
+        res.render('adminError')
         console.log("edit category error "+error);
     }
 }
@@ -123,6 +127,7 @@ const saveEditedCategory=async (req,res)=>{
         }
         
     } catch (error) {
+        res.render('adminError')
         console.log('this is save edited category error '+error);
     }
 }

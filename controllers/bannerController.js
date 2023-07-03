@@ -5,6 +5,7 @@ const loadBanner = async (req,res)=>{
         const bannerData = await Banner.find({}).sort({Timestamp:-1});
         res.render('banner',{bannerData});
     } catch (error) {
+        res.render('adminError')
         console.log('this is load banner error ',error);
     }
 }
@@ -12,6 +13,7 @@ const addBanner = async (req,res)=>{
     try {
         res.render('addBanner');
     } catch (error) {
+        res.render('adminError')
         console.log('this is add banner error ',error);
     }
 }
@@ -28,6 +30,7 @@ const saveBanner = async (req,res)=>{
         await bannerData.save();
         res.render('addBanner',{message:'added Banner successfully'})
     } catch (error) {
+        res.render('adminError')
         console.log('thi sis save banner error ',error);
     }
 }
@@ -37,6 +40,7 @@ const deleteBanner = async (req,res)=>{
         await Banner.findByIdAndDelete({_id:id});
         res.redirect('/admin/banner');
     } catch (error) {
+        res.render('adminError')
         console.log('this is delete banner error ',error);
     }
 }
@@ -51,6 +55,7 @@ const bannerChangeStatus = async (req,res)=>{
         }
         res.redirect('/admin/banner')
     } catch (error) {
+        res.render('adminError')
         console.log('tis is banner change status ',error);
     }
 }
