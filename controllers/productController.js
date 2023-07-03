@@ -13,6 +13,7 @@ const loadHome=async(req,res)=>{
         }
 
     } catch (error) {
+        res.render('error')
         console.log(error);
     }
 };
@@ -183,9 +184,9 @@ const loadShop=async (req,res)=>{
             query = {Category:category}
         }
         const user = req.session.userData;
-        console.log(user, ' this is user');
         await Product.paginate(query,{page:currentPage,limit:pageSize},function(err,result){
             if(err){
+                res.render('error')
                 console.log('pagination error '+err);
             }else{
                 const Product = result.docs;
@@ -219,7 +220,7 @@ const loadShop=async (req,res)=>{
             }
         })
     } catch (error) {
-        console.log('this is loading shop page error'+error);
+        res.render('error')
     }
 }
 const singleProductLoad=async(req,res)=>{
@@ -237,12 +238,14 @@ const singleProductLoad=async(req,res)=>{
         }else{
             res.render('single-product',{
                 singleProduct:singleProduct,
-                AllProducts:OtherProducts
+                AllProducts:OtherProducts,
+
             });
         }
        
     } catch (error) {
-        console.log('single product loading error '+error);
+        res.render('error')
+
     }
 }
 const loadOffer = async (req,res)=>{
@@ -257,6 +260,7 @@ const loadOffer = async (req,res)=>{
         res.render('offer',{offer})
     } catch (error) {
         console.log(' trhis is load offer error ',error);
+        // res.render('error')
     }
 }
 const addOffer = async (req,res)=>{
@@ -264,6 +268,7 @@ const addOffer = async (req,res)=>{
         const Products =await Product.find({})
         res.render('addOffer',{Products})
     } catch (error) {
+        // res.render('error')
         console.log('this is addOffer error ',error);
     }
 }
@@ -290,10 +295,10 @@ const saveProductOffer = async (req,res)=>{
                 const Products = await Product.find({});
                 console.log('else worked');
                 res.render('addoffer',{Products,message:'Category offer is available for selected product'});
-           }
-            
+           }       
     } catch (error) {
         console.log('this is save product offer error ',error);
+        // res.render('error')
     }
 }
 

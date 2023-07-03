@@ -58,9 +58,9 @@ const getBanner = async(req,res)=>{
     try {
         const getBanner = await Banner.find({status:'active'}).limit(3);
         const path =getBanner.map(path=>path.imagePath)
-        console.log(path,'this is banner');
         res.json(getBanner);
     } catch (error) {
+        res.render('error')
         console.log('this is getbanner error ',error);
     }
 }

@@ -65,7 +65,7 @@ const cancelOrder= async (req,res)=>{
         const Orders = await Order.find({}).sort({date:-1});
         res.render('ordersList',{Orders});
     } catch (error) {
-        console.log('this is cancel order error ',error);
+      console.log('this is cancel order error ',error);
     }
 }
 let couponCode;
@@ -127,9 +127,14 @@ const placeOrder = async (req,res)=>{
         if(Orders.length >0){
            latestOrder = Orders[0];
         }
-        res.render('orderSuccess',{latestOrder,user});
+        let maxRedeemable = 0
+        if(latestOrder.Coupon){
+          maxRedeemable = latestOrder.Coupon.maxRedeemable
+        }
+        res.render('orderSuccess',{latestOrder,user,maxRedeemable});
     } catch (error) {
-        console.log('order success page error',error);
+      res.render('error')
+      console.log('order success page error',error);
     }
  }
 
@@ -140,21 +145,23 @@ const placeOrder = async (req,res)=>{
         const user = req.session.userData
         res.render('orders',{Orders,user});
     } catch (error) {
-        console.log('this is view orders error');
+      res.render('error')
+      console.log('this is view orders error');
     }
  }
 const viewOrders = async (req,res)=>{
     try {
-        const orderId = req.query.id;
-        const order = await Order.findById(orderId).populate('Coupon').sort({date:-1});
-        const user = req.session.userData
-        let couponAmount = 0
-        if(order.Coupon){
-          couponAmount=order.Coupon.maxRedeemble;
-        }
-        console.log(couponAmount);
-        res.render('viewOrders',{order,user,couponAmount})
+      const orderId = req.query.id;
+      const order = await Order.findById(orderId).populate('Coupon').sort({date:-1});
+      const user = req.session.userData
+      let couponAmount = 0
+      if(order.Coupon){
+        couponAmount=order.Coupon.maxRedeemble;
+      }
+      console.log(couponAmount);
+      res.render('viewOrders',{order,user,couponAmount})
     } catch (error) {
+        res.render('error')
         console.log('this is view orders error ',error);
     }
 }
@@ -167,7 +174,8 @@ const deleteOrder = async (req,res)=>{
         console.log(Orders);
         res.render('orders',{Orders,user});
     } catch (error) {
-        console.log('delete order error ',error);
+      res.render('error')
+      console.log('delete order error ',error);
     }
 }
 const returnOrder = async(req,res)=>{
@@ -183,8 +191,8 @@ const returnOrder = async(req,res)=>{
     const user = req.session.userData;
     const Orders = await Order.find({userId:user1._id}).sort({date:-1})
     res.render('orders',{Orders,user})
-
   } catch (error) {
+    res.render('error')
     console.log('this is return order ',error);
   }
 }
@@ -203,7 +211,8 @@ const trackOrder=async (req,res)=>{
         fiveDaysAfterOrder.setDate(orderDate.getDate() + 5);
         res.render('trackOrder',{order,now,fiveDaysAfterOrder,user})
     } catch (error) {
-        console.log('this is track order errror');
+      res.render('error')
+      console.log('this is track order errror');
     }
 }
 module.exports={

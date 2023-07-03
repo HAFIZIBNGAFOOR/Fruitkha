@@ -7,7 +7,7 @@
           <div class="content-wrapper">
             
             <div class="row">
-                <form class="d-flex align-items-center h-100" method="post" action="">
+                <!-- <form class="d-flex align-items-center h-100" method="post" action="">
                     <div class="input-group">
                       <div class="input-group-prepend bg-transparent">
                         <i class="input-group-text border-0 mdi mdi-magnify"></i>
@@ -17,14 +17,15 @@
                    
                         <input type="submit" class="form-control bg-transparent border-0"   value="Search">
                   
-                  </form>
+                  </form> -->
                 <div class=" grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
+                      <div class="table-responsive text-nowrap">
                       <h4 class="card-title">FRUITKHA USERS </h4>
                       <p class="card-description">  <code></code>
                       </p>
-                      <table class="table">
+                      <table class="table" id="myTable">
                         <thead>
                           <tr>
                             <th>#</th>
@@ -70,7 +71,7 @@
                            <% } %>
                         </tbody>
                       </table>
-                      
+                      </div>
                     </div>
                     <div class="row">
                       <nav aria-label="Page navigation example">
@@ -243,4 +244,9 @@
           });
       };
     </script>
-   
+   <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/sp-2.1.2/datatables.min.js"></script>
+   <script>
+     $(document).ready( function () {
+       $('#myTable').DataTable();
+     } );
+     </script>

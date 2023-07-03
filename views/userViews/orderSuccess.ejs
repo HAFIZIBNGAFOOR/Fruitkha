@@ -138,7 +138,7 @@
                                         <td></td>
                                         <td><p>Rs.<%= totalPrice %></p></td>
                                       </tr>
-                                      <% if (latestOrder.Coupon.maxRedeemable) { %>
+                                      <% if ( maxRedeemable > 0) { %>
                                         <tr>
                                             <td>
                                                 <p>Coupon Discount :</p>
@@ -147,7 +147,7 @@
                                                 <h5></h5>
                                             </td>
                                             <td>
-                                                <p>Rs.<%= latestOrder.Coupon.maxRedeemable %></p>
+                                                <p>Rs.<%= maxRedeemable %></p>
                                             </td>
                                         </tr>
                                         <% } %>
@@ -189,12 +189,7 @@
                                 </tbody>
                             </table>
                            
-                                <!-- <div class="col-lg-12">
-                                    <div class="details_item">
-                                        <span>Coupon Discount : Rs.<%= latestOrder.Coupon.maxRedeemable %></span>
-                                        </div>
-                                        </div> 
-                            -->
+                              
                                    
                     </div>
                 </div>

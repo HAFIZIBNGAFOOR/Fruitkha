@@ -55,7 +55,6 @@ const coupon = async (req, res, next) => {
     const total = req.body.total;
     const couponData = await Coupon.findOne({ code: codeId }).lean();
     let couponId = couponData._id
-    console.log(couponId,' this is cpuon id');
     const userData = await Coupon.findOne({
       code: codeId,
       userId: req.session.userData._id,
@@ -66,10 +65,8 @@ const coupon = async (req, res, next) => {
         res.json("fail");
       } else {
         if(total >= couponData.minCartAmount){
-
             const offerPrice = couponData.maxRedeemable;
             const gtotal = total- offerPrice
-            console.log(offerPrice,gtotal, ' this is insiede greter that mincart' ,couponId);
             const userupdate = await Coupon.updateOne(
                 { code: codeId },
                 { $push: { userId: req.session.userData._id } }
@@ -83,6 +80,7 @@ const coupon = async (req, res, next) => {
       res.json("fail");
     }
   } catch (error) {
+    res.render('error')
     console.log(error, ' this is coupon error ');
   }
 };

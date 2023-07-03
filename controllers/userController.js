@@ -22,6 +22,7 @@ const loadLogin=(req,res)=>{
        }
 
     } catch (error) {
+        res.render('error')
         console.log('login rendering error '+error);
     }
 }
@@ -29,6 +30,7 @@ const loadSignUp=(req,res)=>{
     try {
         res.render('userSignup')
     } catch (error) {
+        res.render('error')
         console.log('signup page error'+error);
     }
 }
@@ -150,6 +152,7 @@ const verifyOTP=async (req,res)=>{
             res.render('otpverification',{message:'Entered OTP is incorrect'})
         } 
     } catch (error) {
+        res.render('error')
         console.log(error);
     }
 }
@@ -173,6 +176,7 @@ const verifyLogin=async (req,res)=>{
             res.json(false)
         }
     } catch (error) {
+        res.render('error')
         console.log('verify login error '+error);
     }
 }
@@ -212,6 +216,7 @@ const verifyUser=async(req,res)=>{
             }
         }
     } catch (error) {
+        res.render('error')
         console.log('this is verify user error '+error);
     }
 }
@@ -246,6 +251,7 @@ const loadCheckout = async(req,res)=>{
             discountAmount
         });        
     } catch (error) {
+        res.render('error')
         console.log('load checkout error',error);
     }
 }
@@ -262,6 +268,7 @@ const editCheckoutAddress = async(req,res)=>{
             user
         });
     } catch (error) {
+        res.render('error')
         console.log('this is edit checkout error ',error);
     }
 }
@@ -278,6 +285,7 @@ const deleteCheckoutAddress= async (req,res)=>{
             res:'success'
         })
     } catch (error) {
+        res.render('error')
         console.log(' this is delete checkoust address ',error);
     }
 }
@@ -286,6 +294,7 @@ const addCheckoutAddress = async (req,res)=>{
         let user = req.session.userData._id
         res.render('addnewAddressCheckout',{user})
     } catch (error) {
+        res.render('error')
         console.log('this is add checkout adddress error '+error);
     }
 }
@@ -317,6 +326,7 @@ const saveCheckoutAddress= async(req,res)=>{
             res.redirect('/Checkout')
         }
     } catch (error) {
+        res.render('error')
         console.log('this is save checkout error ', error);
     }
 }
@@ -329,6 +339,7 @@ const loadProfile = async (req,res)=>{
             user,
         });
     } catch (error) {
+        res.render('error')
         console.log('load profile error ',error);
     }
 } 
@@ -346,12 +357,10 @@ const AddProfile= async (req,res)=>{
             mobile:mobile
         }})        
         const user = await User.findOne({email:email});
-        console.log(user);
-        res.render('profile',{
-            user
-        })
+        res.render('profile',{user})
     } catch (error) {
         console.log('this is add profile error ', error);
+        res.render('error')
     }
 }
 const loadAddress = async (req,res)=>{
@@ -364,18 +373,17 @@ const loadAddress = async (req,res)=>{
         const Addresses = userData.Address;
         res.render('address' ,{userData,Addresses,user});
     } catch (error) {
+        res.render('error')
         console.log('this is add address ',error);
     }
 }
 const addAddress = async (req,res)=>{
     try {
         const userId = req.query.id;
-
         const user =await User.findById(userId)
-        console.log(user);
         res.render('addAddress',{user});
-
     } catch (error) {
+        res.render('error')
         console.log('this is addaddress error ',error);
     }
 }
@@ -419,6 +427,7 @@ const saveAddress = async (req,res)=>{
         res.render('address', {userData,Addresses,user})
         }
     } catch (error) {
+        res.render('error')
         console.log('save address error ',error);
     }
 }
@@ -434,6 +443,7 @@ const loadEditAddress =async (req,res)=>{
         console.log(address ,' this is address load edit');
         res.render('editAddress', {user,address})
     } catch (error) {
+        res.render('error')
         console.log('This is load edit addreess error ',error);
     }
 }
@@ -463,6 +473,7 @@ const saveEditedAddress = async (req,res)=>{
         console.log(savedAddress,' this is user address');
         res.redirect('/address')
     } catch (error) {
+        res.render('error')
         console.log('this is the save edited address errror',error);
     }
 }
@@ -479,6 +490,7 @@ const deleteAddress = async(req,res)=>{
             console.log(userData.Address,' this is delete address');
                 res.render('address',{userData,Addresses,user})
         } catch (error) {
+            res.render('error')
             console.log('this is delete address here',error);
         }
     }
@@ -518,6 +530,7 @@ const loadForgotPassword =async (req,res)=>{
         const user = req.session.userData;
         res.render('resetPassword',{user})
     } catch (error) {
+        res.render('error')
         console.log('this is load forgott password error ',error);
     }
  }
@@ -541,6 +554,7 @@ const forgotPassword = async (req,res)=>{
             res.render('resetPassword',{message:"Entered Email doesn't exists",user});
         }
     } catch (error) {
+        res.render('error')
         console.log('this is forgot password error ',error);
     }
  }
@@ -554,6 +568,7 @@ const forgetVerify = async (req,res)=>{
             console.log(false);
         }
     } catch (error) {
+        res.render('error')
         console.log('this is password otp verify error ', error);
     }
  }
@@ -569,12 +584,13 @@ const resetPassword =async(req,res)=>{
         )
         res.render('addPassword',{message:'Password changed successfully',user_id})
     } catch (error) {
+        res.render('error')
         console.log('this is reset password errr ',error);
     }
  }
  const userLoad=async(req,res)=>{
     try {
-        const pageSize =  5;
+        const pageSize =  10;
         const currentPage = req.query.page || 1
         const searchQuery = req.query.search || ''
         const result=await User.paginate({},{page:currentPage,limit:pageSize})

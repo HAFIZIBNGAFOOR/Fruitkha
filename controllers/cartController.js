@@ -26,6 +26,7 @@ const addToCart = async (req,res)=>{
             }          
         }        
     } catch (error) {
+        res.render('error')
         console.log(' add to cart erorr  ',error);
     }
 }
@@ -54,6 +55,7 @@ const loadCart = async(req,res)=>{
             subTotal
         });
     } catch (error) {
+        res.render('error')
         console.log('this is laod cart error ',error);
     }
 }
@@ -67,6 +69,7 @@ const deleteCart = async (req,res)=>{
         })
         res.json({cartItems,allTotal});
     } catch (error) {
+        res.render('error')
         console.log('this is delete cart error ',error);
     }
 }
@@ -91,6 +94,7 @@ const updateCart = async(req,res)=>{
             res.json('emptyCart')
         }             
     } catch (error) {
+        res.render('error')
         console.log('update cart error ',error);
     }
 }
