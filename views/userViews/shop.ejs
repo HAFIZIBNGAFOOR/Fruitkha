@@ -75,55 +75,28 @@
             </div>
 			<div class="row product-lists">
 				<% if (Product.length>0) { %>
-					<% for( let i = 0; i < Product.length; i++ ) { %>
-						<% if (Product.length<2) { %>
-							<div class="col-lg-6 col-md-6 text-center ">					
-						
-								<div class="single-product-item ">
-								 
-								 <div class="product-image" >
-									<a href="/single-product?id=<%= Product[i]._id %>">
-									<img class="img-fit escape" src="/images/<%= Product[i].ProductImage[2] %>" alt="">								
-									<h3><%= Product[i].ProductName %></h3>
-									<div class="pricing">
-										<p class="price"><span class="mr-2 price-dc">$120.00</span><span class="price-sale">$80.00</span></p>
-									</div>
-									</a>
-								</div>
-									<a href="" value="<%= Product[i]._id %> <% user?user:'' %>" class="cart-btn addToCart"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-
-							 	</div>
-						 	</div>
-							<% } else{%>
-						<div class="col-lg-4 col-md-6 text-center ">					
-						
-					   <div class="single-product-item ">
-						
-						<div class="product-image">
-							<a href="/single-product?id=<%= `${Product[i]._id}` %>">
+					<% for (let i = 0; i < Product.length; i++) { %>
+						<div class="col-lg-4 col-md-6 text-center">
+						  <div class="single-product-item">
+							<div class="product-image">
+							  <a href="/single-product?id=<%= `${Product[i]._id}` %>">
 								<img class="img-fluid" src="/images/<%= Product[i].ProductImage[1] %>" alt="">
-											
-						</div>
-						<h3 class="product-name"><%= Product[i].ProductName %></h3>
-						<!-- <div class="pricing"> -->
+							  </a>
+							</div>
+							<h3 class="product-name"><%= Product[i].ProductName %></h3>
 							<p class="price">
 							  <% if (Product[i].DiscountedPrice > 0) { %>
 								<del class="text-muted">Rs.<%= Product[i].Price.toFixed(2) %></del><br>
 								<span class="price-sale"><b>Rs.<%= Product[i].DiscountedPrice.toFixed(2) %></b></span>
-								<% } else { %>
-								
-									<span><strong>Rs.<%= Product[i].Price.toFixed(2) %></strong></span><br><br>
+							  <% } else { %>
+								<span><strong>Rs.<%= Product[i].Price.toFixed(2) %></strong></span><br><br>
 							  <% } %>
 							</p>
-						  <!-- </div> -->
-						</a>
-						<a  value=<%=` ${Product[i]._id}${user ? `,${user._id}` : ''} `%> class="cart-btn addToCart"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
-					    <!-- <p class="text-success d-none" id="Added" > Item Added to Cart </p>
-						<p class=" text-danger d-none" id="Failed"> Please Login to Add to Cart  </p> -->
-					</div>
-				</div>
-				<% } %>
-				<% } %>
+							<a  value=<%=` ${Product[i]._id}${user ? `,${user._id}` : ''} `%> class="cart-btn addToCart"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+						  </div>
+						</div>
+					  <% } %>
+					  
 				<% } else {%>
 					<div>No Products Found</div>
 					<% } %>
